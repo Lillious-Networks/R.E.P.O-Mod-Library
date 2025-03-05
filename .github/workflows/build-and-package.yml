@@ -30,22 +30,12 @@ jobs:
     concurrency:
       group: build
       cancel-in-progress: true
-    runs-on: windows-latest
+    runs-on: windows-2025
     steps:
       - name: Checkout code 🛒
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Setup .NET 📲
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 4.7.2
-
-      - name: Setup Nuget 🛠️📦
-        uses: Nuget/setup-nuget@v2.0.1
-        with:
-          nuget-version: "6.x"
 
       - name: Restore dependencies 🛠️🔗
         run: dotnet restore Repo_Library.sln
@@ -60,31 +50,34 @@ jobs:
       - name: Create NuGet nuspec file 📦
         shell: pwsh
         run: |
-          touch Repo_Library.nuspec
-          echo '<?xml version="1.0" encoding="utf-8"?>' >> Repo_Library.nuspec
-          echo '<package>' >> Repo_Library.nuspec
-          echo '  <metadata>' >> Repo_Library.nuspec
-          echo '    <id>RepoModLibrary</id>' >> Repo_Library.nuspec
-          echo '    <version>${{ needs.generate-build-number.outputs.version }}</version>' >> Repo_Library.nuspec
-          echo '    <title>(Official) R.E.P.O Mod Library</title>' >> Repo_Library.nuspec
-          echo '    <authors>Lillious, .Zer0</authors>' >> Repo_Library.nuspec
-          echo '    <requireLicenseAcceptance>false</requireLicenseAcceptance>' >> Repo_Library.nuspec
-          echo '    <license type="expression">MIT</license>' >> Repo_Library.nuspec
-          echo '    <description>The official mod library for the game R.E.P.O</description>' >> Repo_Library.nuspec
-          echo '    <releaseNotes></releaseNotes>' >> Repo_Library.nuspec
-          echo '    <copyright>Copyright © 2025</copyright>' >> Repo_Library.nuspec
-          echo '    <tags></tags>' >> Repo_Library.nuspec
-          echo '    <dependencies>' >> Repo_Library.nuspec
-          echo '      <dependency id="LavaGang.MelonLoader" version="0.7.0" />' >> Repo_Library.nuspec
-          echo '    </dependencies>' >> Repo_Library.nuspec
-          echo '  </metadata>' >> Repo_Library.nuspec
-          echo '  <files>' >> Repo_Library.nuspec
-          echo '    <file src="bin\Release\Repo_Library.dll" target="lib"/>' >> Repo_Library.nuspec
-          echo '    <file src="bin\Release\Assembly-CSharp.dll" target="lib"/>' >> Repo_Library.nuspec
-          echo '    <file src="bin\Release\UnityEngine.CoreModule.dll" target="lib"/>' >> Repo_Library.nuspec
-          echo '    <file src="bin\Release\UnityEngine.dll" target="lib"/>' >> Repo_Library.nuspec
-          echo '  </files>' >> Repo_Library.nuspec
-          echo '</package>' >> Repo_Library.nuspec
+          $nuspecContent = @"
+          <?xml version="1.0" encoding="utf-8"?>
+          <package>
+            <metadata>
+              <id>RepoModLibrary</id>
+              <version>${{ needs.generate-build-number.outputs.version }}</version>
+              <title>(Official) R.E.P.O Mod Library</title>
+              <authors>Lillious, .Zer0</authors>
+              <requireLicenseAcceptance>false</requireLicenseAcceptance>
+              <license type="expression">MIT</license>
+              <description>The official mod library for the game R.E.P.O</description>
+              <releaseNotes></releaseNotes>
+              <copyright>Copyright © 2025</copyright>
+              <tags></tags>
+              <dependencies>
+                <dependency id="LavaGang.MelonLoader" version="0.7.0" />
+              </dependencies>
+            </metadata>
+            <files>
+              <file src="bin\Release\Repo_Library.dll" target="lib"/>
+              <file src="bin\Release\Assembly-CSharp.dll" target="lib"/>
+              <file src="bin\Release\UnityEngine.CoreModule.dll" target="lib"/>
+              <file src="bin\Release\UnityEngine.dll" target="lib"/>
+            </files>
+          </package>
+          "@
+
+          $nuspecContent | Out-File -Encoding utf8 -FilePath "Repo_Library.nuspec"
 
       - name: Pack NuGet package 📦
         run: nuget pack Repo_Library.nuspec -OutputDirectory .
