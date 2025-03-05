@@ -54,6 +54,7 @@ jobs:
               <version>${{ needs.generate-build-number.outputs.version }}</version>
               <title>(Official) R.E.P.O Mod Library</title>
               <authors>Lillious, .Zer0</authors>
+              <owners>Lillious, .Zer0</owners>
               <requireLicenseAcceptance>false</requireLicenseAcceptance>
               <license type="expression">MIT</license>
               <description>The official mod library for the game R.E.P.O</description>
@@ -86,7 +87,7 @@ jobs:
           git config --global user.email "logan.brown@tylertech.com"
           git config --global user.name "Logan Brown"
 
-      - name: Release
+      - name: Release 🚀
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.generate-build-number.outputs.version }}
