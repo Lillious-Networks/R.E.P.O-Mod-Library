@@ -21,6 +21,12 @@ namespace Repo_Library
         public static List<Level> Menus = new List<Level>();
     }
 
+    public class SharedSystemData
+    {
+        public static StatsManager StatsManager { get; set; }
+        public static RunManager RunManager { get; set; }
+    }
+
     public class SharedPlayerData
     {
         public static PlayerController PlayerController { get; set; }
@@ -62,11 +68,15 @@ namespace Repo_Library
 
             SetPlayerController(playerController);
             SetPlayerCollision(playerCollision);
+
+            StatsManager statsManager = GameObject.Find("Stats Manager").GetComponent<StatsManager>();
+            SetStatsManager(statsManager);
         }
 
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
         {
             RunManager runManager = GameObject.Find("Run Manager").GetComponent<RunManager>();
+            SetRunManager(runManager);
 
             // Set and store levels for the game
             if (!IsInitialized())
@@ -184,6 +194,15 @@ namespace Repo_Library
             SharedData.IsInGame = value;
         }
 
+        public void SetStatsManager(StatsManager statsManager)
+        {
+            SharedSystemData.StatsManager = statsManager;
+        }
+
+        public void SetRunManager(RunManager runManager)
+        {
+            SharedSystemData.RunManager = runManager;
+        }
 
         // GET METHODS
 
@@ -234,6 +253,16 @@ namespace Repo_Library
         public PlayerCollision GetPlayerCollision()
         {
             return SharedPlayerData.PlayerCollision;
+        }
+
+        public StatsManager GetStatsManager()
+        {
+            return SharedSystemData.StatsManager;
+        }
+
+        public RunManager GetRunManager()
+        {
+            return SharedSystemData.RunManager;
         }
 
         // Revive player at a spawn point
