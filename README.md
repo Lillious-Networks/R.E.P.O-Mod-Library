@@ -4,6 +4,15 @@
 
 The R.E.P.O Mod Library is a mod library for the game [R.E.P.O](https://store.steampowered.com/app/3241660/REPO/), designed to provide a comprehensive set of utility functions and shared data management for modding the game. Created by Lillious & .Zer0, this library offers extensive control over player mechanics, game state tracking, and system interactions.
 
+## Compatibility
+- Supports the latest version of [R.E.P.O](https://store.steampowered.com/app/3241660/REPO/)
+
+- Compatible with [MelonLoader v0.7.0](https://github.com/LavaGang/MelonLoader/releases/tag/v0.7.0) modding framework
+
+- Compatibility may vary with [BepInEx](https://github.com/BepInEx/BepInEx) modding framework using the [BepInEx.MelonLoader.Loader](https://github.com/BepInEx/BepInEx.MelonLoader.Loader) plugin
+
+- Currently still in early development, so expect missing features and bugs
+
 ## Features
 
 ### Shared Data Management
@@ -80,11 +89,5 @@ namespace Repo_ExampleMod
 }
 ```
 
-## Compatibility
-- Supports latest R.E.P.O game
-- Compatible with MelonLoader modding framework
-- Compatibility may vary with BepInEx modding framework using the [BepInEx.MelonLoader.Loader](https://github.com/BepInEx/BepInEx.MelonLoader.Loader)
-- Currently still in development, so expect missing features and bugs
-
 ## Credits
-Created by Lillious & .Zer0
+Created by [Lillious](https://github.com/Lillious) & [.Zer0](https://github.com/Zer0-0)
