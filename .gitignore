@@ -365,3 +365,4 @@ FodyWeavers.xsd
 *.exe
 *.nupkg
 *.nuspec
+/.vscode/
