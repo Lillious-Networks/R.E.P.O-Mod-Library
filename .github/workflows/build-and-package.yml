@@ -70,6 +70,9 @@ jobs:
               <file src="bin\Release\Assembly-CSharp.dll" target="lib"/>
               <file src="bin\Release\UnityEngine.CoreModule.dll" target="lib"/>
               <file src="bin\Release\UnityEngine.dll" target="lib"/>
+              <file src="bin\Release\Unity.InputSystem.dll" target="lib"/>
+              <file src="bin\Release\UnityEngine.InputLegacyModule.dll" target="lib"/>
+              <file src="bin\Release\UnityEngine.InputModule.dll" target="lib"/>
             </files>
           </package>
           "@
