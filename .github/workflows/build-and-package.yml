@@ -30,7 +30,7 @@ jobs:
     concurrency:
       group: build
       cancel-in-progress: true
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout code 🛒
         uses: actions/checkout@v4
@@ -58,6 +58,7 @@ jobs:
         run: dotnet build -c Release
 
       - name: Create NuGet nuspec file 📦
+        shell: pwsh
         run: |
           touch Repo_Library.nuspec
           echo '<?xml version="1.0" encoding="utf-8"?>' >> Repo_Library.nuspec
