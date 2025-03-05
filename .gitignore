@@ -363,8 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 *.exe
-
-/packages
-/packages.config
 *.nupkg
 *.nuspec
