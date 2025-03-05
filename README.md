@@ -90,4 +90,4 @@ namespace Repo_ExampleMod
 ```
 
 ## Credits
-Created by [Lillious](https://github.com/Lillious) & [.Zer0](https://github.com/Zer0-0)
+Created by [Lillious](https://github.com/Lillious) & [.Zer0](https://github.com/Elyriand21)
