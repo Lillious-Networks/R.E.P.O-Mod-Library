@@ -3,6 +3,7 @@ using UnityEngine;
 using Repo_Library;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Steamworks;
 
 [assembly: MelonInfo(typeof(Library), "R.E.P.O Mod Library", "1.0.0", "Lillious & .Zer0")]
 [assembly: MelonGame("semiwork", "REPO")]
@@ -31,6 +32,7 @@ namespace Repo_Library
     {
         public static PlayerController PlayerController { get; set; }
         public static PlayerCollision PlayerCollision { get; set; }
+        public static ulong SteamId { get; set; }
     }
 
     public class Library : MelonMod
@@ -81,6 +83,7 @@ namespace Repo_Library
             // Set and store levels for the game
             if (!IsInitialized())
             {
+                SetSteamId(SteamClient.SteamId);
                 SetInititialized(true);
                 SetLevels(runManager.levels);
                 SetMenuLevels(new List<Level> { runManager.levelMainMenu, runManager.levelLobbyMenu, runManager.levelLobby });
@@ -143,6 +146,10 @@ namespace Repo_Library
         }
         
         // SET METHODS
+        public void SetSteamId(ulong steamId)
+        {
+            SharedPlayerData.SteamId = steamId;
+        }
 
         public void SetPlayerController(PlayerController playerController)
         {
@@ -205,6 +212,10 @@ namespace Repo_Library
         }
 
         // GET METHODS
+        public ulong GetSteamId()
+        {
+            return SharedPlayerData.SteamId;
+        }
 
         public bool IsInitialized()
         {
