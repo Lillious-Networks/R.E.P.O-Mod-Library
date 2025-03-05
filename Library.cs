@@ -48,10 +48,6 @@ namespace Repo_Library
                 MelonLogger.Msg("Player not found");
                 return;
             }
-            else
-            {
-                MelonLogger.Msg("Player found");
-            }
 
             PlayerController playerController = player.GetComponent<PlayerController>();
             PlayerCollision playerCollision = collision.GetComponent<PlayerCollision>();
