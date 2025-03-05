@@ -23,7 +23,6 @@ jobs:
           $buildNumber = "1.0.${{ github.run_number }}"
           echo "version=$buildNumber" >> $env:GITHUB_OUTPUT
 
-  # Install net472 and build the project
   build:
     name: "Build ${{ needs.generate-build-number.outputs.version }} Release 🏗"
     needs: generate-build-number
@@ -40,11 +39,11 @@ jobs:
       - name: NuGet Restore dependencies 🛠️🔗
         run: nuget restore Repo_Library.sln
 
-      - name: Build
+      - name: Build 🏗
         working-directory: .
         run: dotnet build -c Release
 
-      - name: Create NuGet nuspec file 📦
+      - name: Create NuGet package manifest 📝
         shell: pwsh
         run: |
           $nuspecContent = @"
@@ -79,7 +78,10 @@ jobs:
       - name: Pack NuGet package 📦
         run: nuget pack Repo_Library.nuspec -OutputDirectory .
 
-      - name: Set up Git
+      - name: Publish NuGet package to Microsoft NuGet 🚀
+        run: nuget push RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }}
+
+      - name: Set up Git 🛠️
         run: |
           git config --global user.email "logan.brown@tylertech.com"
           git config --global user.name "Logan Brown"
