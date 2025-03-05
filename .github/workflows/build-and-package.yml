@@ -43,6 +43,9 @@ jobs:
       - name: NuGet Restore dependencies 🛠️🔗
         run: nuget restore Repo_Library.sln
 
+      - name: Install "LavaGang.MelonLoader" dependency
+        run: nuget install LavaGang.MelonLoader -Version 0.7.0
+
       - name: Build
         working-directory: .
         run: dotnet build -c Release
