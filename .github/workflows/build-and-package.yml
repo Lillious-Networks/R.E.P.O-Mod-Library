@@ -37,9 +37,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Restore dependencies 🛠️🔗
-        run: dotnet restore Repo_Library.sln
-
       - name: NuGet Restore dependencies 🛠️🔗
         run: nuget restore Repo_Library.sln
 
@@ -89,7 +86,6 @@ jobs:
 
       - name: Release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           tag_name: v${{ needs.generate-build-number.outputs.version }}
           name: Release v${{ needs.generate-build-number.outputs.version }}
