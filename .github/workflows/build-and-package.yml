@@ -53,6 +53,7 @@ jobs:
               <id>RepoModLibrary</id>
               <version>${{ needs.generate-build-number.outputs.version }}</version>
               <title>(Official) R.E.P.O Mod Library</title>
+              <readme>README.md</readme>
               <authors>Lillious, .Zer0</authors>
               <owners>Lillious, .Zer0</owners>
               <requireLicenseAcceptance>false</requireLicenseAcceptance>

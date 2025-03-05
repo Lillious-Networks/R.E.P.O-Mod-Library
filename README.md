@@ -2,7 +2,7 @@
 
 ## Overview
 
-The R.E.P.O Mod Library is a MelonLoader mod for the game REPO, designed to provide a comprehensive set of utility functions and shared data management for modding the game. Created by Lillious & .Zer0, this library offers extensive control over player mechanics, game state tracking, and system interactions.
+The R.E.P.O Mod Library is a MelonLoader mod for the game [R.E.P.O](https://store.steampowered.com/app/3241660/REPO/), designed to provide a comprehensive set of utility functions and shared data management for modding the game. Created by Lillious & .Zer0, this library offers extensive control over player mechanics, game state tracking, and system interactions.
 
 ## Features
 
