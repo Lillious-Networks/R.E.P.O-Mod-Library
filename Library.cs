@@ -15,6 +15,8 @@ namespace Repo_Library
         public static bool IsInitialized { get; set; }
         public static bool IsInLobby { get; set; }
         public static bool IsInGame { get; set; }
+        public static bool IsInShop { get; set; }
+        public static bool IsInArena { get; set; }
         public static List<Level> Levels = new List<Level>();
         public static List<Level> Menus = new List<Level>();
     }
@@ -94,6 +96,26 @@ namespace Repo_Library
                 SetInLobby(false);
             }
 
+            // Check if the player is in the shop
+            if (runManager.levelCurrent == runManager.levelShop)
+            {
+                SetInShop(true);
+            }
+            else
+            {
+                SetInShop(false);
+            }
+
+            // Check if the player is in the arena
+            if (runManager.levelCurrent == runManager.levelArena)
+            {
+                SetInArena(true);
+            }
+            else
+            {
+                SetInArena(false);
+            }
+
             // Checks if the player is in game
             if (!SharedData.Menus.Contains(runManager.levelCurrent))
             {
@@ -137,6 +159,16 @@ namespace Repo_Library
             SharedData.IsInLobby = value;
         }
 
+        public void SetInShop(bool value)
+        {
+            SharedData.IsInShop = value;
+        }
+
+        public void SetInArena(bool value)
+        {
+            SharedData.IsInArena = value;
+        }
+
         public void SetLevels(List<Level> levels)
         {
             SharedData.Levels = levels;
@@ -151,6 +183,7 @@ namespace Repo_Library
         {
             SharedData.IsInGame = value;
         }
+
 
         // GET METHODS
 
@@ -177,6 +210,15 @@ namespace Repo_Library
         public bool IsInGame() 
         { 
             return SharedData.IsInGame; 
+        }
+
+        public bool IsInShop()
+        {
+            return SharedData.IsInShop;
+        }
+        public bool IsInArena()
+        {
+            return SharedData.IsInArena;
         }
 
         public List<Level> GetMenuLevels()
