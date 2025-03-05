@@ -1,0 +1,113 @@
+name: Build and Package
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'libs/**'
+      - "**.csproj"
+      - "**.sln"
+      - "**.cs"
+
+jobs:
+  generate-build-number:
+    name: Generate Build Number 🔢
+    runs-on: windows-latest
+    outputs:
+      version: ${{ steps.generate-build-number.outputs.version }}
+    steps:
+      - name: Generate Build Number 🔢
+        id: generate-build-number
+        run: |
+          $buildNumber = "1.0.${{ github.run_number }}"
+          echo "version=$buildNumber" >> $env:GITHUB_OUTPUT
+
+  # Install net472 and build the project
+  build:
+    name: "Build ${{ needs.generate-build-number.outputs.version }} Release 🏗"
+    needs: generate-build-number
+    concurrency:
+      group: build
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code 🛒
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET 📲
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 4.7.2
+
+      - name: Setup Nuget 🛠️📦
+        uses: Nuget/setup-nuget@v2.0.1
+        with:
+          nuget-version: "6.x"
+
+      - name: Restore dependencies 🛠️🔗
+        run: dotnet restore Repo_Library.sln
+
+      - name: NuGet Restore dependencies 🛠️🔗
+        run: nuget restore Repo_Library.sln
+
+      - name: Build
+        working-directory: .
+        run: dotnet build -c Release
+
+      - name: Create NuGet nuspec file 📦
+        run: |
+          touch Repo_Library.nuspec
+          echo '<?xml version="1.0" encoding="utf-8"?>' >> Repo_Library.nuspec
+          echo '<package>' >> Repo_Library.nuspec
+          echo '  <metadata>' >> Repo_Library.nuspec
+          echo '    <id>RepoModLibrary</id>' >> Repo_Library.nuspec
+          echo '    <version>${{ needs.generate-build-number.outputs.version }}</version>' >> Repo_Library.nuspec
+          echo '    <title>(Official) R.E.P.O Mod Library</title>' >> Repo_Library.nuspec
+          echo '    <authors>Lillious, .Zer0</authors>' >> Repo_Library.nuspec
+          echo '    <requireLicenseAcceptance>false</requireLicenseAcceptance>' >> Repo_Library.nuspec
+          echo '    <license type="expression">MIT</license>' >> Repo_Library.nuspec
+          echo '    <description>The official mod library for the game R.E.P.O</description>' >> Repo_Library.nuspec
+          echo '    <releaseNotes></releaseNotes>' >> Repo_Library.nuspec
+          echo '    <copyright>Copyright © 2025</copyright>' >> Repo_Library.nuspec
+          echo '    <tags></tags>' >> Repo_Library.nuspec
+          echo '    <dependencies>' >> Repo_Library.nuspec
+          echo '      <dependency id="LavaGang.MelonLoader" version="0.7.0" />' >> Repo_Library.nuspec
+          echo '    </dependencies>' >> Repo_Library.nuspec
+          echo '  </metadata>' >> Repo_Library.nuspec
+          echo '  <files>' >> Repo_Library.nuspec
+          echo '    <file src="bin\Release\Repo_Library.dll" target="lib"/>' >> Repo_Library.nuspec
+          echo '    <file src="bin\Release\Assembly-CSharp.dll" target="lib"/>' >> Repo_Library.nuspec
+          echo '    <file src="bin\Release\UnityEngine.CoreModule.dll" target="lib"/>' >> Repo_Library.nuspec
+          echo '    <file src="bin\Release\UnityEngine.dll" target="lib"/>' >> Repo_Library.nuspec
+          echo '  </files>' >> Repo_Library.nuspec
+          echo '</package>' >> Repo_Library.nuspec
+
+      - name: Pack NuGet package 📦
+        run: nuget pack Repo_Library.nuspec -OutputDirectory .
+
+      - name: Set up Git
+        run: |
+          git config --global user.email "logan.brown@tylertech.com"
+          git config --global user.name "Logan Brown"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: v${{ needs.generate-build-number.outputs.version }}
+          release_name: Release ${{ needs.generate-build-number.outputs.version }}
+          draft: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg
+          asset_name: RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg
+          asset_content_type: application/x-msdownload
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
