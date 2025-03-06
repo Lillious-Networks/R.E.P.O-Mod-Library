@@ -591,7 +591,11 @@ namespace Repo_Library
             GameObject[] items = GetItemsInMap();
             foreach (GameObject item in items)
             {
-                item.gameObject.GetComponent<PhysGrabObjectImpactDetector>().enabled = !disable;
+                PhysGrabObjectImpactDetector detector = item?.GetComponent<PhysGrabObjectImpactDetector>();
+                if (detector != null)
+                {
+                    detector.enabled = !disable;
+                }
             }
         }
     }
