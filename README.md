@@ -115,7 +115,7 @@ The following provides information about the utility functions available in the 
 | Function | Description |
 |----------|-------------|
 | `SetInititialized(bool value)` | Sets the initialization status of the scene |
-| `IsInitialized()` | Checks if the scene is initialized |
+| `IsInitialized()` | Checks if the game has been initialized |
 | `SetInMainMenu(bool value)` | Sets whether the player is in the main menu |
 | `IsInMainMenu()` | Checks if the player is in the main menu |
 | `SetInLobby(bool value)` | Sets whether the player is in the lobby |
@@ -193,7 +193,7 @@ The following provides information about the utility functions available in the 
 | `SetSprintSpeed(PlayerController playerController, float speed)` | Sets the player's sprint movement speed |
 | `IsSprinting(PlayerController playerController)` | Checks if the player is currently sprinting |
 | `SetSprinting(PlayerController playerController, bool value)` | Forces the player's sprint state on or off |
-| `SetUpgradeAmounts(PlayerController playerController, int amount)` | Sets the number of speed upgrades the player has |
+| `SetSpeedUpgradeAmounts(PlayerController playerController, int amount)` | Sets the number of speed upgrades the player has |
 | `SetCustomGravity(PlayerController playerController, float gravity)` | Sets a custom gravity value for the player |
 
 

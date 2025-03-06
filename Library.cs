@@ -513,7 +513,7 @@ namespace Repo_Library
         }
 
         // Set speed upgrade amounts to a specific value
-        public void SetUpgradeAmounts(PlayerController playerController, int amount)
+        public void SetSpeedUpgradeAmounts(PlayerController playerController, int amount)
         {
             if (playerController == null) return;
             playerController.SprintSpeedUpgrades = amount;
