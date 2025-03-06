@@ -191,6 +191,7 @@ The following provides information about the utility functions available in the 
 | `RespawnPlayer(PlayerController playerController)` | Instantly moves the player to a default spawn point (0, 0, -21) |
 | `TeleportPlayer(PlayerController playerController, Vector3 position)` | Teleports the player to a specified position |
 | `AntiGravity(PlayerController playerController, float time)` | Applies anti-gravity effect to the player for the specified duration |
+| `HealPlayer(GameObject playerAvatar, int health)` | Heals the player by the specified amount |
 
 ### Player Stats Management
 

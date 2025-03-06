@@ -43,6 +43,7 @@ namespace Repo_Library
         public static PlayerController PlayerController { get; set; }
         public static PlayerCollision PlayerCollision { get; set; }
         public static ulong SteamId { get; set; }
+        public static GameObject PlayerAvatar { get; set; }
     }
 
     public class Library : MelonMod
@@ -53,12 +54,14 @@ namespace Repo_Library
             await Task.Delay(2000);
             GameObject player = GameObject.Find("Player").transform.Find("Controller").gameObject;
             GameObject collision = player.transform.Find("Collision").gameObject;
+            GameObject PlayerAvatar = GameObject.Find("PlayerAvatar(Clone)").transform.Find("Player Avatar Controller").gameObject;
 
             PlayerController playerController = player.GetComponent<PlayerController>();
             PlayerCollision playerCollision = collision.GetComponent<PlayerCollision>();
 
             SetPlayerController(playerController);
             SetPlayerCollision(playerCollision);
+            SetPlayerAvatar(PlayerAvatar);
         }
 
         // Set scene data for the game
@@ -290,6 +293,11 @@ namespace Repo_Library
             SharedSystemData.PostProcessing = postProcessing;
         }
 
+        public static void SetPlayerAvatar(GameObject playerAvatar)
+        {
+            SharedPlayerData.PlayerAvatar = playerAvatar;
+        }
+
         // GET METHODS
         public ulong GetSteamId()
         {
@@ -416,6 +424,10 @@ namespace Repo_Library
         public PostProcessing GetPostProcessing()
         {
             return SharedSystemData.PostProcessing;
+        }
+        public GameObject GetPlayerAvatar()
+        {
+            return SharedPlayerData.PlayerAvatar;
         }
 
         public int GetEnemyCount()
@@ -580,12 +592,14 @@ namespace Repo_Library
             }
         }
 
+        // Get all items in the map
         public GameObject[] GetItemsInMap ()
         {
             GameObject[] items = GameObject.FindGameObjectsWithTag("Phys Grab Object");
             return items;
         }
 
+        // Disable items durability in the game
         public void DisableItemsDurability (bool disable)
         {
             GameObject[] items = GetItemsInMap();
@@ -597,6 +611,12 @@ namespace Repo_Library
                     detector.enabled = !disable;
                 }
             }
+        }
+
+        // Heal player
+        public void HealPlayer(GameObject playerAvatar, int health)
+        {
+            playerAvatar.GetComponent<PlayerHealth>().Heal(health, true);
         }
     }
 }
