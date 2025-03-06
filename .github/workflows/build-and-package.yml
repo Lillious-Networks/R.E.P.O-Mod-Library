@@ -98,6 +98,8 @@ jobs:
         with:
           tag_name: v${{ needs.generate-build-number.outputs.version }}
           name: Release v${{ needs.generate-build-number.outputs.version }}
-          files: RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg
+          files: |
+            RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg
+            bin/Release/Repo_Library.dll
           make_latest: true
           target_commitish: ${{ github.sha }}
