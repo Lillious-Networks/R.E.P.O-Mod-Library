@@ -10,7 +10,7 @@ using Steamworks;
 
 namespace Repo_Library
 {
-    public class SharedData
+    public class SharedSceneData
     {
         public static bool IsInMainMenu { get; set; }
         public static bool IsInitialized { get; set; }
@@ -18,14 +18,22 @@ namespace Repo_Library
         public static bool IsInGame { get; set; }
         public static bool IsInShop { get; set; }
         public static bool IsInArena { get; set; }
+        public static bool IsInTruckLobby { get; set; }
         public static List<Level> Levels = new List<Level>();
         public static List<Level> Menus = new List<Level>();
+        public static GameObject Map { get; set; }
     }
 
     public class SharedSystemData
     {
         public static StatsManager StatsManager { get; set; }
         public static RunManager RunManager { get; set; }
+        public static GraphicsManager GraphicsManager { get; set; }
+        public static GameplayManager GameplayManager { get; set; }
+        public static AssetManager AssetManager { get; set; }
+        public static AudioManager AudioManager { get; set; }
+        public static NetworkManager NetworkManager { get; set; }
+        public static GameObject LevelGenerator { get; set; }
     }
 
     public class SharedPlayerData
@@ -36,43 +44,53 @@ namespace Repo_Library
     }
 
     public class Library : MelonMod
-    {
+    { 
+        // Set controllers for the player
         public async void SetPlayerData()
         {
             await Task.Delay(1000);
-            // Set controllers for the player
             GameObject player = GameObject.Find("Player").transform.Find("Controller").gameObject;
             GameObject collision = player.transform.Find("Collision").gameObject;
-            if (player == null)
-            {
-                MelonLogger.Msg("Player not found");
-                return;
-            }
 
             PlayerController playerController = player.GetComponent<PlayerController>();
             PlayerCollision playerCollision = collision.GetComponent<PlayerCollision>();
 
-            if (playerController == null)
-            {
-                MelonLogger.Msg("Player controller not found");
-                return;
-            }
-
-            if (playerCollision == null)
-            {
-                MelonLogger.Msg("Player collision not found");
-                return;
-            }
-
             SetPlayerController(playerController);
             SetPlayerCollision(playerCollision);
+        }
 
+        // Set scene data for the game
+        public async void SetSceneData()
+        {
+            await Task.Delay(1000);
             StatsManager statsManager = GameObject.Find("Stats Manager").GetComponent<StatsManager>();
             SetStatsManager(statsManager);
+
+            GraphicsManager graphicsManager = GameObject.Find("Graphics Manager").GetComponent<GraphicsManager>();
+            SetGraphicsManager(graphicsManager);
+
+            GameplayManager gameplayManager = GameObject.Find("Gameplay Manager").GetComponent<GameplayManager>();
+            SetGameplayManager(gameplayManager);
+
+            AssetManager assetManager = GameObject.Find("Asset Manager").GetComponent<AssetManager>();
+            SetAssetManager(assetManager);
+
+            AudioManager audioManager = GameObject.Find("Audio Manager").GetComponent<AudioManager>();
+            SetAudioManager(audioManager);
+
+            NetworkManager networkManager = GameObject.Find("Network Manager").GetComponent<NetworkManager>();
+            SetNetworkManager(networkManager);
+
+            GameObject map = GameObject.Find("Map").gameObject;
+            SetMap(map);
+
+            GameObject levelGenerator = GameObject.Find("Level Generator").gameObject;
+            SetLevelGenerator(levelGenerator);
         }
 
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
         {
+            // Set the run manager for the game that determines the current level
             RunManager runManager = GameObject.Find("Run Manager").GetComponent<RunManager>();
             SetRunManager(runManager);
 
@@ -82,7 +100,7 @@ namespace Repo_Library
                 SetSteamId(SteamClient.SteamId);
                 SetInititialized(true);
                 SetLevels(runManager.levels);
-                SetMenuLevels(new List<Level> { runManager.levelMainMenu, runManager.levelLobbyMenu, runManager.levelLobby });
+                SetMenuLevels(new List<Level> { runManager.levelMainMenu, runManager.levelLobbyMenu });
             }
 
             // Check if the player is in the main menu
@@ -96,7 +114,7 @@ namespace Repo_Library
             }
 
             // Check if the player is in the lobby
-            if (runManager.levelCurrent == runManager.levelLobbyMenu || runManager.levelCurrent == runManager.levelLobby)
+            if (runManager.levelCurrent == runManager.levelLobbyMenu || runManager.levelCurrent)
             {
                 SetInLobby(true);
             }
@@ -125,8 +143,17 @@ namespace Repo_Library
                 SetInArena(false);
             }
 
+            if (runManager.levelCurrent == runManager.levelLobby)
+            {
+                SetInTruckLobby(true);
+            }
+            else
+            {
+                SetInTruckLobby(false);
+            }
+
             // Checks if the player is in game
-            if (!SharedData.Menus.Contains(runManager.levelCurrent))
+            if (!SharedSceneData.Menus.Contains(runManager.levelCurrent))
             {
                 // Check if we are already in a game
                 if (IsInGame()) return;
@@ -159,42 +186,47 @@ namespace Repo_Library
 
         public void SetInititialized(bool value)
         {
-            SharedData.IsInitialized = value;
+            SharedSceneData.IsInitialized = value;
         }
 
         public void SetInMainMenu(bool value)
         {
-            SharedData.IsInMainMenu = value;
+            SharedSceneData.IsInMainMenu = value;
         }
 
         public void SetInLobby(bool value)
         {
-            SharedData.IsInLobby = value;
+            SharedSceneData.IsInLobby = value;
         }
 
         public void SetInShop(bool value)
         {
-            SharedData.IsInShop = value;
+            SharedSceneData.IsInShop = value;
         }
 
         public void SetInArena(bool value)
         {
-            SharedData.IsInArena = value;
+            SharedSceneData.IsInArena = value;
+        }
+
+        public void SetInTruckLobby(bool value)
+        {
+            SharedSceneData.IsInTruckLobby = value;
         }
 
         public void SetLevels(List<Level> levels)
         {
-            SharedData.Levels = levels;
+            SharedSceneData.Levels = levels;
         }
 
         public void SetMenuLevels(List<Level> levels)
         {
-            SharedData.Menus = levels;
+            SharedSceneData.Menus = levels;
         }
 
         public void SetInGame(bool value)
         {
-            SharedData.IsInGame = value;
+            SharedSceneData.IsInGame = value;
         }
 
         public void SetStatsManager(StatsManager statsManager)
@@ -206,6 +238,38 @@ namespace Repo_Library
         {
             SharedSystemData.RunManager = runManager;
         }
+        public void SetGraphicsManager(GraphicsManager graphicsManager)
+        {
+            SharedSystemData.GraphicsManager = graphicsManager;
+        }
+        public void SetGameplayManager(GameplayManager gameplayManager)
+        {
+            SharedSystemData.GameplayManager = gameplayManager;
+        }
+
+        public void SetAssetManager(AssetManager assetManager)
+        {
+            SharedSystemData.AssetManager = assetManager;
+        }
+
+        public void SetAudioManager(AudioManager audioManager)
+        {
+            SharedSystemData.AudioManager = audioManager;
+        }
+
+        public void SetNetworkManager(NetworkManager networkManager)
+        {
+            SharedSystemData.NetworkManager = networkManager;
+        }
+
+        public void SetMap(GameObject map)
+        {
+            SharedSceneData.Map = map;
+        }
+        public void SetLevelGenerator(GameObject levelGenerator)
+        {
+            SharedSystemData.LevelGenerator = levelGenerator;
+        }
 
         // GET METHODS
         public ulong GetSteamId()
@@ -215,41 +279,46 @@ namespace Repo_Library
 
         public bool IsInitialized()
         {
-            return SharedData.IsInitialized;
+            return SharedSceneData.IsInitialized;
         }
 
         public bool IsInMainMenu()
         {
-            return SharedData.IsInMainMenu;
+            return SharedSceneData.IsInMainMenu;
         }
 
         public bool IsInLobby()
         {
-            return SharedData.IsInLobby;
+            return SharedSceneData.IsInLobby;
         }
 
         public List<Level> GetLevels()
         {
-            return SharedData.Levels;
+            return SharedSceneData.Levels;
         }
 
         public bool IsInGame() 
         { 
-            return SharedData.IsInGame; 
+            return SharedSceneData.IsInGame; 
         }
 
         public bool IsInShop()
         {
-            return SharedData.IsInShop;
+            return SharedSceneData.IsInShop;
         }
         public bool IsInArena()
         {
-            return SharedData.IsInArena;
+            return SharedSceneData.IsInArena;
+        }
+
+        public bool IsInTruckLobby()
+        {
+            return SharedSceneData.IsInTruckLobby;
         }
 
         public List<Level> GetMenuLevels()
         {
-            return SharedData.Menus;
+            return SharedSceneData.Menus;
         }
 
         public PlayerController GetPlayerController()
@@ -270,6 +339,84 @@ namespace Repo_Library
         public RunManager GetRunManager()
         {
             return SharedSystemData.RunManager;
+        }
+
+        public GraphicsManager GetGraphicsManager()
+        {
+            return SharedSystemData.GraphicsManager;
+        }
+
+        public GameplayManager GetGameplayManager()
+        {
+            return SharedSystemData.GameplayManager;
+        }
+
+        public AssetManager GetAssetManager()
+        {
+            return SharedSystemData.AssetManager;
+        }
+
+        public AudioManager GetAudioManager()
+        {
+            return SharedSystemData.AudioManager;
+        }
+
+        public NetworkManager GetNetworkManager()
+        {
+            return SharedSystemData.NetworkManager;
+        }
+
+        public GameObject GetMap()
+        {
+            return SharedSceneData.Map;
+        }
+
+        public Map GetMapContoller ()
+        {
+            return SharedSceneData.Map.transform.Find("Map Controller").GetComponent<Map>();
+        }
+        public GameObject GetLevelGenerator()
+        {
+            return SharedSystemData.LevelGenerator;
+        }
+
+        public LevelGenerator GetLevelGeneratorController()
+        {
+            return SharedSystemData.LevelGenerator.GetComponent<LevelGenerator>();
+        }
+
+        public int GetEnemyCount()
+        {
+            GameObject levelGenerator = GetLevelGenerator();
+            GameObject enemies = levelGenerator.transform.Find("Enemies").gameObject;
+            return enemies.transform.childCount;
+        }
+
+        // Freeze enemies in the game
+        public void FreezeEnemies(bool freeze)
+        {
+            GameObject levelGenerator = GetLevelGenerator();
+            GameObject enemies = levelGenerator.transform.Find("Enemies").gameObject;
+            foreach (Transform enemy in enemies.transform)
+            {
+                GameObject _enemy = enemy.transform.gameObject;
+                GameObject controller = _enemy.transform.Find("Enable")?.gameObject.transform.Find("Controller")?.gameObject;
+                controller.SetActive(freeze);
+            }
+        }
+
+        // Disable enemies in the game
+        // Some enemies can be reactivated by the game
+        public void DisableEnemies(bool disable)
+        {
+            GameObject levelGenerator = GetLevelGenerator();
+            GameObject enemies = levelGenerator.transform.Find("Enemies").gameObject;
+            foreach (Transform enemy in enemies.transform)
+            {
+                GameObject _enemy = enemy.transform.gameObject;
+                GameObject enable = _enemy.transform.Find("Enable")?.gameObject;
+                enable.SetActive(!disable);
+            }
         }
 
         // Revive player at a spawn point
