@@ -13,43 +13,49 @@ The R.E.P.O Mod Library is a mod library for the game [R.E.P.O](https://store.st
 
 - Currently still in early development, so expect missing features and bugs
 
-## Features
+## Key Features
 
-### Shared Data Management
-- Track game state across different scenes and menus
-- Monitor player location and current game context
-- Manage levels and menu states
+The R.E.P.O Mod Library provides a comprehensive set of utilities that enable:
 
-### Player Controller Utilities
-- Modify player attributes dynamically
-- Control player movement and energy
-- Manipulate player physics and movement speeds
+### Scene Management
+- **Multi-scene Architecture**: Support for different game environments including main menu, lobby, shop, arena, and truck lobby with state tracking
+- **Level Management**: Tools for managing and accessing both gameplay and menu levels
+- **Map Control**: Direct access to map objects and their controllers for environmental manipulation
 
-### Key Capabilities
+### Player Systems
+- **Movement Mechanics**: Configurable movement speeds for walking, sprinting, and crouching
+- **Energy System**: Customizable energy mechanics with adjustable maximum capacity and sprint drain rates
+- **Gravity Manipulation**: Special movement abilities including anti-gravity effects and custom gravity settings
+- **Revival System**: Multiple options for player respawning and revival at designated points
 
-#### Game State Tracking
-- Detect current game context (Main Menu, Lobby, Shop, Arena, In-Game)
-- Track game initialization status
-- Manage Steam integration
+### Enemy Control
+- **Enemy Management**: Functions to count, freeze, or disable enemies across the level
+- **Controller Access**: Ability to manipulate enemy controllers for gameplay adjustments
 
-#### Player Mechanics
-- Revive and respawn player
-- Teleport player
-- Modify energy levels
-- Control movement speeds (sprint, crouch, normal)
-- Adjust gravity
-- Toggle sprinting
+### System Architecture
+- **Manager Framework**: Centralized access to critical game systems including:
+  - Stats tracking
+  - Run management
+  - Graphics settings
+  - Gameplay rules
+  - Asset management
+  - Audio control
+  - Network functionality
+- **Steam Integration**: Support for Steam player identification
 
-### System Managers
-- Access to RunManager
-- Access to StatsManager
-- Steam ID retrieval
+### Game State Utilities
+- **State Tracking**: Comprehensive tracking of game state across different scenes and modes
+- **Level Generation**: Access to level generation systems for dynamic content creation
+
+### Player Data
+- **Player Information Persistence**: Mechanisms to maintain player data across different game states
+- **Player Stats Customization**: Tools for modifying player capabilities and performance
 
 ## Installation
 1. Install this nuget package to your project
 2. import the library into your mod
 
-## Usage Examples
+## Usage Example
 
 ```csharp
 using MelonLoader;
@@ -88,6 +94,108 @@ namespace Repo_ExampleMod
     }
 }
 ```
+
+## Documentation
+
+The following provides information about the utility functions available in the game system. These functions are categorized based on their purpose and functionality.
+
+### Player Data Management
+
+| Function | Description |
+|----------|-------------|
+| `SetSteamId(ulong steamId)` | Sets the player's Steam ID |
+| `GetSteamId()` | Returns the player's Steam ID |
+| `SetPlayerController(PlayerController playerController)` | Associates a PlayerController with the player data |
+| `GetPlayerController()` | Returns the player's PlayerController instance |
+| `SetPlayerCollision(PlayerCollision playerCollision)` | Sets the player's collision component |
+| `GetPlayerCollision()` | Returns the player's collision component |
+
+### Scene State Management
+
+| Function | Description |
+|----------|-------------|
+| `SetInititialized(bool value)` | Sets the initialization status of the scene |
+| `IsInitialized()` | Checks if the scene is initialized |
+| `SetInMainMenu(bool value)` | Sets whether the player is in the main menu |
+| `IsInMainMenu()` | Checks if the player is in the main menu |
+| `SetInLobby(bool value)` | Sets whether the player is in the lobby |
+| `IsInLobby()` | Checks if the player is in the lobby |
+| `SetInShop(bool value)` | Sets whether the player is in the shop |
+| `IsInShop()` | Checks if the player is in the shop |
+| `SetInArena(bool value)` | Sets whether the player is in the arena |
+| `IsInArena()` | Checks if the player is in the arena |
+| `SetInTruckLobby(bool value)` | Sets whether the player is in the truck lobby |
+| `IsInTruckLobby()` | Checks if the player is in the truck lobby |
+| `SetInGame(bool value)` | Sets whether the player is in an active game |
+| `IsInGame()` | Checks if the player is in an active game |
+
+### Level Management
+
+| Function | Description |
+|----------|-------------|
+| `SetLevels(List<Level> levels)` | Sets the available game levels |
+| `GetLevels()` | Returns the list of available game levels |
+| `SetMenuLevels(List<Level> levels)` | Sets the available menu levels |
+| `GetMenuLevels()` | Returns the list of available menu levels |
+| `SetMap(GameObject map)` | Sets the current map GameObject |
+| `GetMap()` | Returns the current map GameObject |
+| `GetMapContoller()` | Returns the Map component controller from the current map |
+| `SetLevelGenerator(GameObject levelGenerator)` | Sets the level generator GameObject |
+| `GetLevelGenerator()` | Returns the level generator GameObject |
+| `GetLevelGeneratorController()` | Returns the LevelGenerator component from the level generator |
+
+### System Managers
+
+| Function | Description |
+|----------|-------------|
+| `SetStatsManager(StatsManager statsManager)` | Sets the stats manager instance |
+| `GetStatsManager()` | Returns the stats manager instance |
+| `SetRunManager(RunManager runManager)` | Sets the run manager instance |
+| `GetRunManager()` | Returns the run manager instance |
+| `SetGraphicsManager(GraphicsManager graphicsManager)` | Sets the graphics manager instance |
+| `GetGraphicsManager()` | Returns the graphics manager instance |
+| `SetGameplayManager(GameplayManager gameplayManager)` | Sets the gameplay manager instance |
+| `GetGameplayManager()` | Returns the gameplay manager instance |
+| `SetAssetManager(AssetManager assetManager)` | Sets the asset manager instance |
+| `GetAssetManager()` | Returns the asset manager instance |
+| `SetAudioManager(AudioManager audioManager)` | Sets the audio manager instance |
+| `GetAudioManager()` | Returns the audio manager instance |
+| `SetNetworkManager(NetworkManager networkManager)` | Sets the network manager instance |
+| `GetNetworkManager()` | Returns the network manager instance |
+
+### Enemy Management
+
+| Function | Description |
+|----------|-------------|
+| `GetEnemyCount()` | Returns the current number of enemies in the level |
+| `FreezeEnemies(bool freeze)` | Freezes or unfreezes all enemies in the current level by toggling their controller components |
+| `DisableEnemies(bool disable)` | Disables or enables all enemies in the current level (note: some enemies might be reactivated by the game) |
+
+### Player Control
+
+| Function | Description |
+|----------|-------------|
+| `RevivePlayer(PlayerController playerController)` | Revives the player at a default spawn point (0, 0, -21) |
+| `RespawnPlayer(PlayerController playerController)` | Instantly moves the player to a default spawn point (0, 0, -21) |
+| `TeleportPlayer(PlayerController playerController, Vector3 position)` | Teleports the player to a specified position |
+| `AntiGravity(PlayerController playerController, float time)` | Applies anti-gravity effect to the player for the specified duration |
+
+### Player Stats Management
+
+| Function | Description |
+|----------|-------------|
+| `SetPlayerCurrentEnergy(PlayerController playerController, float energy)` | Sets the player's current energy level |
+| `SetPlayerMaxEnergy(PlayerController playerController, float energy)` | Sets the player's maximum energy capacity |
+| `GetPlayerMaxEnergy(PlayerController playerController)` | Gets the player's maximum energy capacity |
+| `SetSprintEnergyDrain(PlayerController playerController, float energy)` | Sets the energy drain rate when sprinting |
+| `SetCrouchSpeed(PlayerController playerController, float speed)` | Sets the player's movement speed while crouching |
+| `SetMovementSpeed(PlayerController playerController, float speed)` | Sets the player's normal movement speed |
+| `SetSprintSpeed(PlayerController playerController, float speed)` | Sets the player's sprint movement speed |
+| `IsSprinting(PlayerController playerController)` | Checks if the player is currently sprinting |
+| `SetSprinting(PlayerController playerController, bool value)` | Forces the player's sprint state on or off |
+| `SetUpgradeAmounts(PlayerController playerController, int amount)` | Sets the number of speed upgrades the player has |
+| `SetCustomGravity(PlayerController playerController, float gravity)` | Sets a custom gravity value for the player |
+
 
 ## Credits
 Created by [Lillious](https://github.com/Lillious) & [.Zer0](https://github.com/Elyriand21)
