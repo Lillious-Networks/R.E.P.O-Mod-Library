@@ -34,6 +34,8 @@ namespace Repo_Library
         public static AudioManager AudioManager { get; set; }
         public static NetworkManager NetworkManager { get; set; }
         public static GameObject LevelGenerator { get; set; }
+        public static GameObject GameDirector { get; set; }
+        public static PostProcessing PostProcessing { get; set; }
     }
 
     public class SharedPlayerData
@@ -48,7 +50,7 @@ namespace Repo_Library
         // Set controllers for the player
         public async void SetPlayerData()
         {
-            await Task.Delay(1000);
+            await Task.Delay(2000);
             GameObject player = GameObject.Find("Player").transform.Find("Controller").gameObject;
             GameObject collision = player.transform.Find("Collision").gameObject;
 
@@ -62,7 +64,7 @@ namespace Repo_Library
         // Set scene data for the game
         public async void SetSceneData()
         {
-            await Task.Delay(1000);
+            await Task.Delay(2000);
             StatsManager statsManager = GameObject.Find("Stats Manager").GetComponent<StatsManager>();
             SetStatsManager(statsManager);
 
@@ -86,6 +88,12 @@ namespace Repo_Library
 
             GameObject levelGenerator = GameObject.Find("Level Generator").gameObject;
             SetLevelGenerator(levelGenerator);
+
+            GameObject gameDirector = GameObject.Find("Game Director").gameObject;
+            SetGameDirector(gameDirector);
+
+            PostProcessing postProcessing = GetGameDirector().transform.Find("Post Processing").transform.Find("Post Processing Main").GetComponent<PostProcessing>();
+            SetPostProcessing(postProcessing);
         }
 
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
@@ -266,9 +274,20 @@ namespace Repo_Library
         {
             SharedSceneData.Map = map;
         }
+
         public void SetLevelGenerator(GameObject levelGenerator)
         {
             SharedSystemData.LevelGenerator = levelGenerator;
+        }
+
+        public void SetGameDirector(GameObject gameDirector)
+        {
+            SharedSystemData.GameDirector = gameDirector;
+        }
+
+        public static void SetPostProcessing(PostProcessing postProcessing)
+        {
+            SharedSystemData.PostProcessing = postProcessing;
         }
 
         // GET METHODS
@@ -384,6 +403,20 @@ namespace Repo_Library
         {
             return SharedSystemData.LevelGenerator.GetComponent<LevelGenerator>();
         }
+        
+        public GameObject GetGameDirector()
+        {
+            return SharedSystemData.GameDirector;
+        }
+
+        public GameDirector GetGameDirectorController()
+        {
+            return SharedSystemData.GameDirector.GetComponent<GameDirector>();
+        }
+        public PostProcessing GetPostProcessing()
+        {
+            return SharedSystemData.PostProcessing;
+        }
 
         public int GetEnemyCount()
         {
@@ -402,20 +435,6 @@ namespace Repo_Library
                 GameObject _enemy = enemy.transform.gameObject;
                 GameObject controller = _enemy.transform.Find("Enable")?.gameObject.transform.Find("Controller")?.gameObject;
                 controller.SetActive(freeze);
-            }
-        }
-
-        // Disable enemies in the game
-        // Some enemies can be reactivated by the game
-        public void DisableEnemies(bool disable)
-        {
-            GameObject levelGenerator = GetLevelGenerator();
-            GameObject enemies = levelGenerator.transform.Find("Enemies").gameObject;
-            foreach (Transform enemy in enemies.transform)
-            {
-                GameObject _enemy = enemy.transform.gameObject;
-                GameObject enable = _enemy.transform.Find("Enable")?.gameObject;
-                enable.SetActive(!disable);
             }
         }
 
@@ -484,11 +503,25 @@ namespace Repo_Library
             playerController.CrouchSpeed = speed;
         }
 
+        // Get player movement speed
+        public float GetMovementSpeed(PlayerController playerController)
+        {
+            if (playerController == null) return 0f;
+            return playerController.MoveSpeed;
+        }
+
         // Set movement speed to a specific value
         public void SetMovementSpeed(PlayerController playerController, float speed)
         {
             if (playerController == null) return;
             playerController.MoveSpeed = speed;
+        }
+
+        // Get player sprint speed
+        public float GetSprintSpeed(PlayerController playerController)
+        {
+            if (playerController == null) return 0f;
+            return playerController.SprintSpeed;
         }
 
         // Set sprint speed to a specific value
@@ -519,11 +552,47 @@ namespace Repo_Library
             playerController.SprintSpeedUpgrades = amount;
         }
 
+        // Get custom gravity value
+        public float GetCustomGravity(PlayerController playerController)
+        {
+            if (playerController == null) return 0f;
+            return playerController.CustomGravity;
+        }
+
         // Set custom gravity to a specific value
         public void SetCustomGravity(PlayerController playerController, float gravity)
         {
             if (playerController == null) return;
             playerController.CustomGravity = gravity;
+        }
+
+        // Disable enemies in the game
+        // Some enemies can be reactivated by the game
+        public void DisableEnemies(bool disable)
+        {
+            GameObject levelGenerator = GetLevelGenerator();
+            GameObject enemies = levelGenerator.transform.Find("Enemies").gameObject;
+            foreach (Transform enemy in enemies.transform)
+            {
+                GameObject _enemy = enemy.transform.gameObject;
+                GameObject enable = _enemy.transform.Find("Enable")?.gameObject;
+                enable.SetActive(!disable);
+            }
+        }
+
+        public GameObject[] GetItemsInMap ()
+        {
+            GameObject[] items = GameObject.FindGameObjectsWithTag("Phys Grab Object");
+            return items;
+        }
+
+        public void DisableItemsDurability (bool disable)
+        {
+            GameObject[] items = GetItemsInMap();
+            foreach (GameObject item in items)
+            {
+                item.gameObject.GetComponent<PhysGrabObjectImpactDetector>().enabled = !disable;
+            }
         }
     }
 }

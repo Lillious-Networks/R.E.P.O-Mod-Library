@@ -143,6 +143,11 @@ The following provides information about the utility functions available in the 
 | `SetLevelGenerator(GameObject levelGenerator)` | Sets the level generator GameObject |
 | `GetLevelGenerator()` | Returns the level generator GameObject |
 | `GetLevelGeneratorController()` | Returns the LevelGenerator component from the level generator |
+| `GetGameDirector(GameObject gameDirector)` | Returns the GameDirector component from the specified GameObject |
+| `SetGameDirector(GameObject gameDirector)` | Sets the GameDirector component from the specified GameObject |
+| `GetGameDirectorController()` | Returns the GameDirector component from the current map |
+| `SetPostProcessing(PostProcessing postProcessing)` | Sets the PostProcessing component for the current map |
+| `GetPostProcessing()` | Returns the PostProcessing component for the current map |
 
 ### System Managers
 
@@ -171,6 +176,13 @@ The following provides information about the utility functions available in the 
 | `FreezeEnemies(bool freeze)` | Freezes or unfreezes all enemies in the current level by toggling their controller components |
 | `DisableEnemies(bool disable)` | Disables or enables all enemies in the current level (note: some enemies might be reactivated by the game) |
 
+### Item Management
+
+| Function | Description |
+|----------|-------------|
+| `GetItemsInMap()` | Returns a list of items in the map |
+| `DisableItemsDurability(bool disable)` | Disables or enables the durability of all items in the map |
+
 ### Player Control
 
 | Function | Description |
@@ -189,11 +201,14 @@ The following provides information about the utility functions available in the 
 | `GetPlayerMaxEnergy(PlayerController playerController)` | Gets the player's maximum energy capacity |
 | `SetSprintEnergyDrain(PlayerController playerController, float energy)` | Sets the energy drain rate when sprinting |
 | `SetCrouchSpeed(PlayerController playerController, float speed)` | Sets the player's movement speed while crouching |
+| `GetMovementSpeed(PlayerController playerController)` | Gets the player's normal movement speed |
 | `SetMovementSpeed(PlayerController playerController, float speed)` | Sets the player's normal movement speed |
 | `SetSprintSpeed(PlayerController playerController, float speed)` | Sets the player's sprint movement speed |
+| `GetSprintSpeed(PlayerController playerController)` | Gets the player's sprint movement speed |
 | `IsSprinting(PlayerController playerController)` | Checks if the player is currently sprinting |
 | `SetSprinting(PlayerController playerController, bool value)` | Forces the player's sprint state on or off |
 | `SetSpeedUpgradeAmounts(PlayerController playerController, int amount)` | Sets the number of speed upgrades the player has |
+| `GetCustomGravity(PlayerController playerController)` | Gets the custom gravity value for the player |
 | `SetCustomGravity(PlayerController playerController, float gravity)` | Sets a custom gravity value for the player |
 
 
