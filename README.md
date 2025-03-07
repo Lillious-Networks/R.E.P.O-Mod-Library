@@ -185,7 +185,8 @@ The following provides information about the utility functions available in the 
 | Function | Description |
 |----------|-------------|
 | `GetItemsInMap()` | Returns a list of items in the map |
-| `DisableItemsDurability(bool disable)` | Disables or enables the durability of all items in the map |
+| `SetDisableItemDurability()` | Disables durability of all items in the map |
+| `SetEnableItemDurability()` | Enables durability of all items in the map |
 | `SpawnItem(GameObject item, Vector3 position)` | Spawns an item at the specified position (AssetManager.instance.surplusValuableSmall) |
 | `SetItems(GameObject[] items)` | Sets the list of items in the map |
 | `GetItems()` | Returns the list of items in the map |

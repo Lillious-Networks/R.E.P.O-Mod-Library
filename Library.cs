@@ -200,12 +200,6 @@ namespace Repo_Library
             }
         }
 
-        public async void SetItemDurability()
-        {
-            await Task.Delay(5000);
-            DisableItemsDurability(true);
-        }
-
         // SET METHODS
         public void SetSteamId(ulong steamId)
         {
@@ -337,6 +331,18 @@ namespace Repo_Library
         public void SetItems(GameObject[] items)
         {
             SharedSceneData.Items = items;
+        }
+
+        public async void SetDisableItemDurability()
+        {
+            await Task.Delay(5000);
+            DisableItemsDurability(true);
+        }
+
+        public async void SetEnableItemDurability()
+        {
+            await Task.Delay(5000);
+            DisableItemsDurability(false);
         }
 
         // GET METHODS
@@ -621,7 +627,7 @@ namespace Repo_Library
         // Some enemies can be reactivated by the game
         public void DisableEnemies(bool disable)
         {
-            GameObject[] enemies = GetEnemies();
+            GameObject[] enemies = GetEnemies().ToArray();
             foreach (GameObject enemy in enemies)
             {
                 GameObject enable = enemy.transform.Find("Enable")?.gameObject;
@@ -638,7 +644,7 @@ namespace Repo_Library
         // Disable items durability in the game
         public void DisableItemsDurability (bool disable)
         {
-            GameObject[] items = GetItems();
+            GameObject[] items = GetItems().ToArray();
             foreach (GameObject item in items)
             {
                 PhysGrabObjectImpactDetector detector = item?.GetComponent<PhysGrabObjectImpactDetector>();
@@ -736,6 +742,24 @@ namespace Repo_Library
                 // Display distance as text above the enemy
                 float distance = Vector3.Distance(player.transform.position, controllerTransform.position);
                 UpdateDistanceText(enemy, distance, controllerTransform.position, player.transform);
+            }
+        }
+
+        public void ClearLines()
+        {
+            GameObject[] enemies = GetEnemies().ToArray();
+            foreach (GameObject enemy in enemies)
+            {
+                LineRenderer line = enemy.GetComponent<LineRenderer>();
+                if (line != null)
+                {
+                    Object.Destroy(line);
+                }
+                TextMesh textMesh = enemy.GetComponentInChildren<TextMesh>();
+                if (textMesh != null)
+                {
+                    Object.Destroy(textMesh.gameObject);
+                }
             }
         }
 
