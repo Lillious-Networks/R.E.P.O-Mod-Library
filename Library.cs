@@ -65,15 +65,6 @@ namespace Repo_Library
             SetPlayerAvatar(PlayerAvatar);
         }
 
-        public override void OnUpdate()
-        {
-            if (Input.GetKeyDown(KeyCode.Keypad3))
-            {
-                GameObject item = AssetManager.instance.surplusValuableBig;
-                SpawnItem(item);
-            }
-        }
-
         // Set scene data for the game
         public async void SetSceneData()
         {
