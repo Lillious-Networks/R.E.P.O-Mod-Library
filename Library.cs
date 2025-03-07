@@ -4,6 +4,7 @@ using Repo_Library;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Steamworks;
+using Photon.Pun;
 
 [assembly: MelonInfo(typeof(Library), "R.E.P.O Mod Library", "1.0.0", "Lillious & .Zer0")]
 [assembly: MelonGame("semiwork", "REPO")]
@@ -62,6 +63,15 @@ namespace Repo_Library
             SetPlayerController(playerController);
             SetPlayerCollision(playerCollision);
             SetPlayerAvatar(PlayerAvatar);
+        }
+
+        public override void OnUpdate()
+        {
+            if (Input.GetKeyDown(KeyCode.Keypad3))
+            {
+                GameObject item = AssetManager.instance.surplusValuableBig;
+                SpawnItem(item);
+            }
         }
 
         // Set scene data for the game
@@ -617,6 +627,20 @@ namespace Repo_Library
         public void HealPlayer(GameObject playerAvatar, int health)
         {
             playerAvatar.GetComponent<PlayerHealth>().Heal(health, true);
+        }
+
+        // Spawn an item in the game
+        public void SpawnItem(GameObject item)
+        {
+            GameObject player = GameObject.Find("Player").transform.Find("Controller").gameObject;
+            Vector3 position = player.transform.position + player.transform.forward * 2 + player.transform.up * 2;
+            if (!SemiFunc.IsMultiplayer())
+            {
+                Object.Instantiate(item, position, Quaternion.identity);
+            } else
+            {
+                PhotonNetwork.InstantiateRoomObject("Valuables/" + item.name, position, Quaternion.identity, 0);
+            }
         }
     }
 }

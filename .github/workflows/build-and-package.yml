@@ -75,6 +75,8 @@ jobs:
               <file src="bin\Release\UnityEngine.InputLegacyModule.dll" target="lib"/>
               <file src="bin\Release\UnityEngine.InputModule.dll" target="lib"/>
               <file src="bin\Release\Facepunch.Steamworks.Win64.dll" target="lib"/>
+              <file src="bin\Release\PhotonUnityNetworking.dll" target="lib"/>
+              <file src="bin\Release\PhotonUnityNetworking.Utilities.dll" target="lib"/>
               <file src="README.md" target="."/>
             </files>
           </package>
