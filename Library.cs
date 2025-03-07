@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Steamworks;
 using Photon.Pun;
+using System.Collections;
 
 [assembly: MelonInfo(typeof(Library), "R.E.P.O Mod Library", "1.0.0", "Lillious & .Zer0")]
 [assembly: MelonGame("semiwork", "REPO")]
@@ -632,6 +633,37 @@ namespace Repo_Library
             {
                 PhotonNetwork.InstantiateRoomObject("Valuables/" + item.name, position, Quaternion.identity, 0);
             }
+        }
+
+        // Utilize the hurt collider on debug objects to damage enemies
+        public void DestroyObject()
+        {
+            GameObject player = GameObject.Find("Player").transform.Find("Controller").gameObject;
+            Transform hurtTransform = player.transform.Find("Hurt Collider");
+            GameObject hurtCollider = hurtTransform ? hurtTransform.gameObject : null;
+            if (hurtCollider == null)
+            {
+                GameObject debug = GameObject.Find("Debug");
+                GameObject _debug = debug?.transform.Find("Debug Axel")?.gameObject;
+                _debug.SetActive(true);
+
+                GameObject debugScript = _debug.transform.Find("Debug Script")?.gameObject;
+                GameObject _object = debugScript.transform.Find("Hurt Collider")?.gameObject;
+                hurtCollider = GameObject.Instantiate(_object, player.transform);
+                hurtCollider.name = "Hurt Collider";
+                hurtCollider.SetActive(false);
+                debug.SetActive(false);
+            }
+
+            // Activate and start coroutine to disable it
+            hurtCollider.SetActive(true);
+            DisableAfterTime(hurtCollider);
+        }
+
+        public async void DisableAfterTime(GameObject hurtCollider)
+        {
+            await Task.Delay(200);
+            hurtCollider.SetActive(false);
         }
     }
 }

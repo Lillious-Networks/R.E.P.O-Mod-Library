@@ -193,6 +193,7 @@ The following provides information about the utility functions available in the 
 | `TeleportPlayer(PlayerController playerController, Vector3 position)` | Teleports the player to a specified position |
 | `AntiGravity(PlayerController playerController, float time)` | Applies anti-gravity effect to the player for the specified duration |
 | `HealPlayer(GameObject playerAvatar, int health)` | Heals the player by the specified amount |
+| `DestroyObject()` | Destroys breakable objects close to the player |
 
 ### Player Stats Management
 
