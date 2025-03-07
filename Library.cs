@@ -5,7 +5,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Steamworks;
 using Photon.Pun;
-using System.Collections;
+
+using System.Linq;
 
 [assembly: MelonInfo(typeof(Library), "R.E.P.O Mod Library", "1.0.0", "Lillious & .Zer0")]
 [assembly: MelonGame("semiwork", "REPO")]
@@ -24,6 +25,8 @@ namespace Repo_Library
         public static List<Level> Levels = new List<Level>();
         public static List<Level> Menus = new List<Level>();
         public static GameObject Map { get; set; }
+        public static GameObject[] Enemies { get; set; }
+        public static GameObject[] Items { get; set; }
     }
 
     public class SharedSystemData
@@ -46,6 +49,7 @@ namespace Repo_Library
         public static PlayerCollision PlayerCollision { get; set; }
         public static ulong SteamId { get; set; }
         public static GameObject PlayerAvatar { get; set; }
+        public static GameObject PlayerControllerObject { get; set; }
     }
 
     public class Library : MelonMod
@@ -61,9 +65,20 @@ namespace Repo_Library
             PlayerController playerController = player.GetComponent<PlayerController>();
             PlayerCollision playerCollision = collision.GetComponent<PlayerCollision>();
 
+            SetPlayerControllerObject(player);
             SetPlayerController(playerController);
             SetPlayerCollision(playerCollision);
             SetPlayerAvatar(PlayerAvatar);
+
+            SetInGame(true);
+        }
+
+        public override void OnUpdate()
+        {
+            if (IsInGame())
+            {
+                DrawLineToEnemy();
+            }
         }
 
         // Set scene data for the game
@@ -99,6 +114,18 @@ namespace Repo_Library
 
             PostProcessing postProcessing = GetGameDirector().transform.Find("Post Processing").transform.Find("Post Processing Main").GetComponent<PostProcessing>();
             SetPostProcessing(postProcessing);
+
+            GameObject enemies = levelGenerator.transform.Find("Enemies").gameObject;
+            List<GameObject> enemyList = new List<GameObject>();
+            foreach (Transform child in enemies.transform)
+            {
+                GameObject childGameObject = child.gameObject;
+                enemyList.Add(childGameObject);
+            }
+            SetEnemies(enemyList.ToArray());
+
+            GameObject[] items = GameObject.FindGameObjectsWithTag("Phys Grab Object");
+            SetItems(items);
         }
 
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
@@ -170,8 +197,8 @@ namespace Repo_Library
             {
                 // Check if we are already in a game
                 if (IsInGame()) return;
-                SetInGame(true);
                 SetPlayerData();
+                SetSceneData();
             }
             else
             {
@@ -179,8 +206,19 @@ namespace Repo_Library
                 SetPlayerController(null);
                 SetPlayerCollision(null);
             }
+
+            if (IsInGame())
+            {
+                SetItemDurability();
+            }
         }
-        
+
+        public async void SetItemDurability()
+        {
+            await Task.Delay(5000);
+            DisableItemsDurability(true);
+        }
+
         // SET METHODS
         public void SetSteamId(ulong steamId)
         {
@@ -190,6 +228,11 @@ namespace Repo_Library
         public void SetPlayerController(PlayerController playerController)
         {
             SharedPlayerData.PlayerController = playerController ?? null;
+        }
+
+        public void SetPlayerControllerObject(GameObject playerController)
+        {
+            SharedPlayerData.PlayerControllerObject = playerController ?? null;
         }
 
         public void SetPlayerCollision(PlayerCollision playerCollision)
@@ -300,6 +343,15 @@ namespace Repo_Library
             SharedPlayerData.PlayerAvatar = playerAvatar;
         }
 
+        public void SetEnemies(GameObject[] enemies)
+        {
+            SharedSceneData.Enemies = enemies;
+        }
+        public void SetItems(GameObject[] items)
+        {
+            SharedSceneData.Items = items;
+        }
+
         // GET METHODS
         public ulong GetSteamId()
         {
@@ -353,6 +405,10 @@ namespace Repo_Library
         public PlayerController GetPlayerController()
         {
             return SharedPlayerData.PlayerController;
+        }
+        public GameObject GetPlayerControllerObject()
+        {
+            return SharedPlayerData.PlayerControllerObject;
         }
 
         public PlayerCollision GetPlayerCollision()
@@ -434,30 +490,24 @@ namespace Repo_Library
 
         public int GetEnemyCount()
         {
-            GameObject levelGenerator = GetLevelGenerator();
-            GameObject enemies = levelGenerator.transform.Find("Enemies").gameObject;
-            return enemies.transform.childCount;
+            GameObject[] enemies = GetEnemies().ToArray();
+            return enemies.Length;
+        }
+
+        public GameObject[] GetEnemies()
+        {
+            return SharedSceneData.Enemies;
         }
 
         // Freeze enemies in the game
         public void FreezeEnemies(bool freeze)
         {
-            GameObject levelGenerator = GetLevelGenerator();
-            GameObject enemies = levelGenerator.transform.Find("Enemies").gameObject;
-            foreach (Transform enemy in enemies.transform)
+            GameObject[] enemies = GetEnemies();
+            foreach (GameObject enemy in enemies)
             {
-                GameObject _enemy = enemy.transform.gameObject;
-                GameObject controller = _enemy.transform.Find("Enable")?.gameObject.transform.Find("Controller")?.gameObject;
+                GameObject controller = enemy.transform.Find("Enable")?.gameObject.transform.Find("Controller")?.gameObject;
                 controller.SetActive(freeze);
             }
-        }
-
-        // Revive player at a spawn point
-        public void RevivePlayer (PlayerController playerController)
-        {
-            Vector3 respawn = new Vector3(0f, 0f, -21f);
-            if (playerController != null) return;
-            playerController?.Revive(respawn);
         }
 
         // Respawn player at a specific position
@@ -584,27 +634,24 @@ namespace Repo_Library
         // Some enemies can be reactivated by the game
         public void DisableEnemies(bool disable)
         {
-            GameObject levelGenerator = GetLevelGenerator();
-            GameObject enemies = levelGenerator.transform.Find("Enemies").gameObject;
-            foreach (Transform enemy in enemies.transform)
+            GameObject[] enemies = GetEnemies();
+            foreach (GameObject enemy in enemies)
             {
-                GameObject _enemy = enemy.transform.gameObject;
-                GameObject enable = _enemy.transform.Find("Enable")?.gameObject;
+                GameObject enable = enemy.transform.Find("Enable")?.gameObject;
                 enable.SetActive(!disable);
             }
         }
 
         // Get all items in the map
-        public GameObject[] GetItemsInMap ()
+        public GameObject[] GetItems ()
         {
-            GameObject[] items = GameObject.FindGameObjectsWithTag("Phys Grab Object");
-            return items;
+            return SharedSceneData.Items;
         }
 
         // Disable items durability in the game
         public void DisableItemsDurability (bool disable)
         {
-            GameObject[] items = GetItemsInMap();
+            GameObject[] items = GetItems();
             foreach (GameObject item in items)
             {
                 PhysGrabObjectImpactDetector detector = item?.GetComponent<PhysGrabObjectImpactDetector>();
@@ -624,7 +671,7 @@ namespace Repo_Library
         // Spawn an item in the game
         public void SpawnItem(GameObject item)
         {
-            GameObject player = GameObject.Find("Player").transform.Find("Controller").gameObject;
+            GameObject player = GetPlayerControllerObject();
             Vector3 position = player.transform.position + player.transform.forward * 2 + player.transform.up * 2;
             if (!SemiFunc.IsMultiplayer())
             {
@@ -638,7 +685,7 @@ namespace Repo_Library
         // Utilize the hurt collider on debug objects to damage enemies
         public void DestroyObject()
         {
-            GameObject player = GameObject.Find("Player").transform.Find("Controller").gameObject;
+            GameObject player = GetPlayerControllerObject();
             Transform hurtTransform = player.transform.Find("Hurt Collider");
             GameObject hurtCollider = hurtTransform ? hurtTransform.gameObject : null;
             if (hurtCollider == null)
@@ -664,6 +711,81 @@ namespace Repo_Library
         {
             await Task.Delay(200);
             hurtCollider.SetActive(false);
+        }
+
+        // Draw a red line from player to enemy
+        // Needs to be called in update loop
+        public void DrawLineToEnemy()
+        {
+            GameObject[] enemies = GetEnemies().ToArray();
+            GameObject player = GetPlayerControllerObject();
+
+            if (enemies == null || enemies.Length == 0) return;
+
+            foreach (GameObject enemy in enemies)
+            {
+                if (enemy == null)
+                {
+                    continue;
+                }
+
+                LineRenderer line = enemy.GetComponent<LineRenderer>();
+                if (line == null)
+                {
+                    line = enemy.AddComponent<LineRenderer>();
+                    ConfigureLineRenderer(line);
+                }
+
+                Transform controllerTransform = enemy.transform.Find("Enable")?.Find("Controller");
+                if (controllerTransform == null)
+                {
+                    continue;
+                }
+
+                // Update positions dynamically
+                line.SetPosition(0, player.transform.position + player.transform.up * 1);
+                line.SetPosition(1, controllerTransform.position + controllerTransform.up * 1);
+
+                // Display distance as text above the enemy
+                float distance = Vector3.Distance(player.transform.position, controllerTransform.position);
+                UpdateDistanceText(enemy, distance, controllerTransform.position, player.transform);
+            }
+        }
+
+        public void ConfigureLineRenderer(LineRenderer line)
+        {
+            line.startWidth = 0.02f;
+            line.endWidth = 0.02f;
+            line.material = new Material(Shader.Find("Sprites/Default"));
+            line.startColor = Color.red;
+            line.endColor = Color.red;
+            line.positionCount = 2;
+        }
+
+        public void UpdateDistanceText(GameObject enemy, float distance, Vector3 position, Transform playerTransform)
+        {
+            TextMesh textMesh = enemy.GetComponentInChildren<TextMesh>();
+            if (textMesh == null)
+            {
+                GameObject textObject = new GameObject("DistanceText");
+                textObject.transform.SetParent(enemy.transform);
+                textObject.transform.localPosition = Vector3.up * 2; // Adjust height
+
+                textMesh = textObject.AddComponent<TextMesh>();
+                textMesh.fontSize = 14;
+                textMesh.characterSize = 0.1f;
+                textMesh.color = Color.white;
+                textMesh.alignment = TextAlignment.Center;
+                textMesh.anchor = TextAnchor.MiddleCenter;
+            }
+
+            // Scale font size with distance (min 14, max 24)
+            textMesh.fontSize = Mathf.Clamp(Mathf.RoundToInt(14 + (distance * 0.2f)), 14, 24);
+
+            textMesh.text = distance.ToString("F1") + "m";
+            textMesh.transform.position = position + Vector3.up * 2; // Keep text above enemy
+            textMesh.transform.LookAt(playerTransform);
+            textMesh.transform.Rotate(0, 180, 0); // Ensure text is readable
         }
     }
 }

@@ -173,8 +173,12 @@ The following provides information about the utility functions available in the 
 | Function | Description |
 |----------|-------------|
 | `GetEnemyCount()` | Returns the current number of enemies in the level |
+| `GetEnemies()` | Returns a list of all enemies in the current level |
 | `FreezeEnemies(bool freeze)` | Freezes or unfreezes all enemies in the current level by toggling their controller components |
 | `DisableEnemies(bool disable)` | Disables or enables all enemies in the current level (note: some enemies might be reactivated by the game) |
+| `DrawLineToEnemy()` | Draws a line from the player to all enemies in the level and displays distance |
+| `SetEnemies(GameObject[] enemies)` | Sets the list of enemies in the current level |
+| `GetEnemies()` | Returns the list of enemies in the current level |
 
 ### Item Management
 
@@ -182,18 +186,21 @@ The following provides information about the utility functions available in the 
 |----------|-------------|
 | `GetItemsInMap()` | Returns a list of items in the map |
 | `DisableItemsDurability(bool disable)` | Disables or enables the durability of all items in the map |
-| `SpawnItem(GameObject item, Vector3 position)` | Spawns an item at the specified position (AssetManager.instance.surplusValuableSmall)|`
+| `SpawnItem(GameObject item, Vector3 position)` | Spawns an item at the specified position (AssetManager.instance.surplusValuableSmall) |
+| `SetItems(GameObject[] items)` | Sets the list of items in the map |
+| `GetItems()` | Returns the list of items in the map |
 
 ### Player Control
 
 | Function | Description |
 |----------|-------------|
-| `RevivePlayer(PlayerController playerController)` | Revives the player at a default spawn point (0, 0, -21) |
 | `RespawnPlayer(PlayerController playerController)` | Instantly moves the player to a default spawn point (0, 0, -21) |
 | `TeleportPlayer(PlayerController playerController, Vector3 position)` | Teleports the player to a specified position |
 | `AntiGravity(PlayerController playerController, float time)` | Applies anti-gravity effect to the player for the specified duration |
 | `HealPlayer(GameObject playerAvatar, int health)` | Heals the player by the specified amount |
 | `DestroyObject()` | Destroys breakable objects close to the player |
+| `SetPlayerAvatar(GameObject playerAvatar)` | Sets the player's avatar GameObject |
+| `GetPlayerAvatar()` | Returns the player's avatar GameObject |
 
 ### Player Stats Management
 
