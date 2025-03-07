@@ -73,14 +73,6 @@ namespace Repo_Library
             SetInGame(true);
         }
 
-        public override void OnUpdate()
-        {
-            if (IsInGame())
-            {
-                DrawLineToEnemy();
-            }
-        }
-
         // Set scene data for the game
         public async void SetSceneData()
         {
@@ -205,11 +197,6 @@ namespace Repo_Library
                 SetInGame(false);
                 SetPlayerController(null);
                 SetPlayerCollision(null);
-            }
-
-            if (IsInGame())
-            {
-                SetItemDurability();
             }
         }
 
