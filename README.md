@@ -26,7 +26,6 @@ The R.E.P.O Mod Library provides a comprehensive set of utilities that enable:
 - **Movement Mechanics**: Configurable movement speeds for walking, sprinting, and crouching
 - **Energy System**: Customizable energy mechanics with adjustable maximum capacity and sprint drain rates
 - **Gravity Manipulation**: Special movement abilities including anti-gravity effects and custom gravity settings
-- **Revival System**: Multiple options for player respawning and revival at designated points
 
 ### Enemy Control
 - **Enemy Management**: Functions to count, freeze, or disable enemies across the level
