@@ -139,8 +139,7 @@ jobs:
             bin/Release/Repo_Library.dll
             Thunderstore-REPO-Mod-Library-Package-${{ needs.generate-build-number.outputs.version }}.zip
           make_latest: ${{ inputs.beta != 'true' }}
+          prerelease: ${{ inputs.beta == 'true' }}
           target_commitish: ${{ github.sha }}
-          body: |
-            $releaseNotes = Get-Content -Path "releasenotes.txt" -Raw
-            $releaseNotes
+          body_path: release_notes.txt
 
