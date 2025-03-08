@@ -6,13 +6,10 @@ on:
       version:
         description: "Version number (e.g. 1.0.0)"
         required: false
-      beta:
-        description: "Create a beta release"
-        required: false
-        default: "false"
   push:
     branches:
       - master
+      - beta
     paths:
       - 'libs/**'
       - "**.csproj"
@@ -24,7 +21,7 @@ jobs:
     name: Generate Build Number 🔢
     runs-on: windows-latest
     outputs:
-      version: ${{ (inputs.version || steps.generate-build-number.outputs.version) }}${{ inputs.beta == 'true' && '-beta' || '' }}
+      version: ${{ (inputs.version || steps.generate-build-number.outputs.version) }}
     steps:
       - name: Generate Build Number 🔢
         if: ${{ !inputs.version }}
@@ -34,7 +31,7 @@ jobs:
           echo "version=$buildNumber" >> $env:GITHUB_OUTPUT
 
   build:
-    name: "Build ${{ needs.generate-build-number.outputs.version }} Release 🏗️🔗"
+    name: "Build ${{ needs.generate-build-number.outputs.version }}${{ github.ref_name == 'beta' && ' (Beta)' || '' }} Release 🏗️🔗"
     needs: generate-build-number
     concurrency:
       group: build
@@ -121,7 +118,7 @@ jobs:
         run: nuget pack Repo_Library.nuspec -OutputDirectory .
 
       - name: Publish Nuget Package 🚀
-        if: ${{ inputs.beta == 'false' }} # Only publish to nuget if not a beta release
+        if: ${{ github.ref_name == 'master' }} # Only publish to nuget if not a beta release
         run: nuget push RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }}
 
       - name: Set up Git 🛠️
@@ -133,13 +130,13 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.generate-build-number.outputs.version }}
-          name: Release v${{ needs.generate-build-number.outputs.version }}${{ inputs.beta == 'true' && ' (Beta)' || '' }}
+          name: Release v${{ needs.generate-build-number.outputs.version }}${{ github.ref_name == 'beta' && ' (Beta)' || '' }}
           files: |
             RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg
             bin/Release/Repo_Library.dll
             Thunderstore-REPO-Mod-Library-Package-${{ needs.generate-build-number.outputs.version }}.zip
-          make_latest: ${{ inputs.beta != 'true' }}
-          prerelease: ${{ inputs.beta == 'true' }}
+          make_latest: ${{ github.ref_name == 'master' }}
+          prerelease: ${{ github.ref_name == 'beta' }}
           target_commitish: ${{ github.sha }}
           body_path: releasenotes.txt
 
