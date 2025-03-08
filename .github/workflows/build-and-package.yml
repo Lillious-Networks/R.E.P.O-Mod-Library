@@ -141,5 +141,5 @@ jobs:
           make_latest: ${{ inputs.beta != 'true' }}
           prerelease: ${{ inputs.beta == 'true' }}
           target_commitish: ${{ github.sha }}
-          body_path: release_notes.txt
+          body_path: releasenotes.txt
 
