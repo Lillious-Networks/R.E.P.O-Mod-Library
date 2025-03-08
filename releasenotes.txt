@@ -1,4 +1,4 @@
-v1.0.35 +
+v1.0.37 +
 - GetItems now correctly returns a filtered list of valuables instead of all items
 - Added ClearEnemyLines
 - Added DrawItemLines (yellow)
