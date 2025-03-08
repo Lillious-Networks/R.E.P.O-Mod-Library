@@ -176,6 +176,7 @@ The following provides information about the utility functions available in the 
 | `FreezeEnemies(bool freeze)` | Freezes or unfreezes all enemies in the current level by toggling their controller components |
 | `DisableEnemies(bool disable)` | Disables or enables all enemies in the current level (note: some enemies might be reactivated by the game) |
 | `DrawLineToEnemy()` | Draws a line from the player to all enemies in the level and displays distance |
+| `ClearEnemyLines()` | Clears all enemy lines drawn by DrawLineToEnemy() |
 | `SetEnemies(GameObject[] enemies)` | Sets the list of enemies in the current level |
 | `GetEnemies()` | Returns the list of enemies in the current level |
 
@@ -189,6 +190,8 @@ The following provides information about the utility functions available in the 
 | `SpawnItem(GameObject item, Vector3 position)` | Spawns an item at the specified position (AssetManager.instance.surplusValuableSmall) |
 | `SetItems(GameObject[] items)` | Sets the list of items in the map |
 | `GetItems()` | Returns the list of items in the map |
+| `DrawLineToItem()` | Draws a line from the player to all items in the map and displays distance |
+| `ClearItemLines()` | Clears all item lines drawn by DrawLineToItem() |
 
 ### Player Control
 

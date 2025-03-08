@@ -116,7 +116,19 @@ namespace Repo_Library
             }
             SetEnemies(enemyList.ToArray());
 
+            // Check if the item has ValueableObject component
             GameObject[] items = GameObject.FindGameObjectsWithTag("Phys Grab Object");
+            // Filter out items that don't have ValueableObject component
+            foreach (GameObject item in items)
+            {
+                // Filter out items that don't have ValueableObject component
+                ValuableObject valuableObject = item.GetComponent<ValuableObject>();
+                if (valuableObject == null)
+                {
+                    items = items.Where(val => val != item).ToArray();
+                }
+            }
+
             SetItems(items);
         }
 
@@ -722,7 +734,7 @@ namespace Repo_Library
                 if (line == null)
                 {
                     line = enemy.AddComponent<LineRenderer>();
-                    ConfigureLineRenderer(line);
+                    ConfigureLineRenderer(line, Color.red);
                 }
 
                 Transform controllerTransform = enemy.transform.Find("Enable")?.Find("Controller");
@@ -737,11 +749,40 @@ namespace Repo_Library
 
                 // Display distance as text above the enemy
                 float distance = Vector3.Distance(player.transform.position, controllerTransform.position);
-                UpdateDistanceText(enemy, distance, controllerTransform.position, player.transform);
+                UpdateDistanceText(enemy, distance, controllerTransform.position, player.transform, Color.red);
             }
         }
 
-        public void ClearLines()
+        // Draw a yellow line from player to item
+        // Needs to be called in update loop
+        public void DrawLineToItem()
+        {
+            GameObject player = GetPlayerControllerObject();
+            GameObject[] items = GetItems().ToArray();
+            if (items == null || items.Length == 0) return;
+
+            foreach (GameObject item in items)
+            {
+                if (item == null)
+                {
+                    continue;
+                }
+                LineRenderer line = item.GetComponent<LineRenderer>();
+                if (line == null)
+                {
+                    line = item.AddComponent<LineRenderer>();
+                    ConfigureLineRenderer(line, Color.yellow);
+                }
+                // Update positions dynamically
+                line.SetPosition(0, player.transform.position + player.transform.up * 1);
+                line.SetPosition(1, item.transform.position + item.transform.up * 1);
+                // Display distance as text above the item
+                float distance = Vector3.Distance(player.transform.position, item.transform.position);
+                UpdateDistanceText(item, distance, item.transform.position, player.transform, Color.yellow);
+            }
+        }
+
+        public void ClearEnemyLines()
         {
             GameObject[] enemies = GetEnemies().ToArray();
             foreach (GameObject enemy in enemies)
@@ -759,17 +800,35 @@ namespace Repo_Library
             }
         }
 
-        public void ConfigureLineRenderer(LineRenderer line)
+        public void ClearItemLines()
         {
-            line.startWidth = 0.02f;
-            line.endWidth = 0.02f;
+            GameObject[] items = GetItems();
+            foreach (GameObject item in items)
+            {
+                LineRenderer line = item.GetComponent<LineRenderer>();
+                if (line != null)
+                {
+                    Object.Destroy(line);
+                }
+                TextMesh textMesh = item.GetComponentInChildren<TextMesh>();
+                if (textMesh != null)
+                {
+                    Object.Destroy(textMesh.gameObject);
+                }
+            }
+        }
+
+        public void ConfigureLineRenderer(LineRenderer line, Color color)
+        {
+            line.startWidth = 0.01f;
+            line.endWidth = 0.01f;
             line.material = new Material(Shader.Find("Sprites/Default"));
-            line.startColor = Color.red;
-            line.endColor = Color.red;
+            line.startColor = color;
+            line.endColor = color;
             line.positionCount = 2;
         }
 
-        public void UpdateDistanceText(GameObject enemy, float distance, Vector3 position, Transform playerTransform)
+        public void UpdateDistanceText(GameObject enemy, float distance, Vector3 position, Transform playerTransform, Color color)
         {
             TextMesh textMesh = enemy.GetComponentInChildren<TextMesh>();
             if (textMesh == null)
@@ -781,7 +840,7 @@ namespace Repo_Library
                 textMesh = textObject.AddComponent<TextMesh>();
                 textMesh.fontSize = 14;
                 textMesh.characterSize = 0.1f;
-                textMesh.color = Color.white;
+                textMesh.color = color;
                 textMesh.alignment = TextAlignment.Center;
                 textMesh.anchor = TextAnchor.MiddleCenter;
             }

@@ -59,7 +59,7 @@ jobs:
               <requireLicenseAcceptance>false</requireLicenseAcceptance>
               <license type="expression">MIT</license>
               <description>The official mod library for the game R.E.P.O</description>
-              <releaseNotes></releaseNotes>
+              <releaseNotes>releasenotes.txt</releaseNotes>
               <copyright>Copyright © 2025</copyright>
               <tags></tags>
               <dependencies>
@@ -82,6 +82,7 @@ jobs:
               <file src="bin\Release\UnityEngine.TextCoreTextEngineModule.dll" target="lib"/>
               <file src="bin\Release\UnityEngine.TextRenderingModule.dll" target="lib"/>
               <file src="README.md" target="."/>
+              <file src="releasenotes.txt" target="."/>
             </files>
           </package>
           "@

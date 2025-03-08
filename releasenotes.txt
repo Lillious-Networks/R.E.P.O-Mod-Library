@@ -1,0 +1,9 @@
+v1.0.35 +
+- GetItems now correctly returns a filtered list of valuables instead of all items
+- Added ClearEnemyLines
+- Added DrawItemLines (yellow)
+- Added ClearItemLines
+- Changed DrawLineToEnemy from white to red
+- Updated line width from 0.02 to 0.01
+- UpdateDistanceText now accepts a color parameter
+- ConfigureLineRenderer now accepts a color parameter

@@ -118,6 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="images\logo.ico" />
+    <Content Include="releasenotes.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
