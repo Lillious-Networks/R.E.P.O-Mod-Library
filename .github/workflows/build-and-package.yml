@@ -1,6 +1,11 @@
 name: Build and Package
 on:
   workflow_dispatch:
+    # Manual version override
+    inputs:
+      version:
+        description: "Version number (e.g. 1.0.0)"
+        required: false
   push:
     branches:
       - master
@@ -15,9 +20,10 @@ jobs:
     name: Generate Build Number 🔢
     runs-on: windows-latest
     outputs:
-      version: ${{ steps.generate-build-number.outputs.version }}
+      version: ${{ inputs.version || steps.generate-build-number.outputs.version }}
     steps:
       - name: Generate Build Number 🔢
+        if: ${{ !inputs.version }}
         id: generate-build-number
         run: |
           $buildNumber = "1.0.${{ github.run_number }}"
