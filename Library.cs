@@ -187,16 +187,12 @@ namespace Repo_Library
             // Checks if the player is in game
             if (!SharedSceneData.Menus.Contains(runManager.levelCurrent))
             {
-                // Check if we are already in a game
-                if (IsInGame()) return;
                 SetPlayerData();
                 SetSceneData();
             }
             else
             {
                 SetInGame(false);
-                SetPlayerController(null);
-                SetPlayerCollision(null);
             }
         }
 
