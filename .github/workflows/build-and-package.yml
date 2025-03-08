@@ -30,26 +30,26 @@ jobs:
           echo "version=$buildNumber" >> $env:GITHUB_OUTPUT
 
   build:
-    name: "Build ${{ needs.generate-build-number.outputs.version }} Release 🏗"
+    name: "Build ${{ needs.generate-build-number.outputs.version }} Release 🏗️🔗"
     needs: generate-build-number
     concurrency:
       group: build
       cancel-in-progress: true
     runs-on: windows-2025
     steps:
-      - name: Checkout code 🛒
+      - name: Checkout code 🛒🔗
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: NuGet Restore dependencies 🛠️🔗
+      - name: Nuget Restore dependencies 🛠️🔗
         run: nuget restore Repo_Library.sln
 
-      - name: Build 🏗
+      - name: Build 🏗️🔗
         working-directory: .
         run: dotnet build -c Release
 
-      - name: Create NuGet package manifest 📝
+      - name: Create Nuget package Metadata 📝🍗
         shell: pwsh
         run: |
           $releaseNotes = Get-Content -Path "releasenotes.txt" -Raw
@@ -89,6 +89,7 @@ jobs:
               <file src="bin\Release\UnityEngine.TextCoreTextEngineModule.dll" target="lib"/>
               <file src="bin\Release\UnityEngine.TextRenderingModule.dll" target="lib"/>
               <file src="README.md" target="."/>
+              <file src="images\icon.png" target="."/>
               <file src="releasenotes.txt" target="."/>
             </files>
           </package>
@@ -96,10 +97,27 @@ jobs:
 
           $nuspecContent | Out-File -Encoding utf8 -FilePath "Repo_Library.nuspec"
 
-      - name: Pack NuGet package 📦
+      - name: Create Thunderstore Package Metadata 📝⚡
+        run: |
+          $thunderstoreMetadata = @"
+          {
+              "name": "Official_REPO_Mod_Library",
+              "description": "A mod library with developer friendly syntax with the goal of simplifying writing repetitive and ugly code.",
+              "version_number": "${{ needs.generate-build-number.outputs.version }}",
+              "dependencies": [],
+              "website_url": "https://www.nuget.org/packages/RepoModLibrary"
+          }
+          "@
+
+          $thunderstoreMetadata | Out-File -Encoding utf8 -FilePath "manifest.json"
+
+          Compress-Archive -Path "bin\Release\Repo_Library.dll", "images\icon.png", "manifest.json", "README.md" -DestinationPath "Thunderstore-REPO-Mod-Library-Package-${{ needs.generate-build-number.outputs.version }}.zip"
+
+          
+      - name: Package Nuspec Metadata 📦
         run: nuget pack Repo_Library.nuspec -OutputDirectory .
 
-      - name: Publish NuGet package to Microsoft NuGet 🚀
+      - name: Publish Nuget Package 🚀
         run: nuget push RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }}
 
       - name: Set up Git 🛠️
@@ -107,7 +125,7 @@ jobs:
           git config --global user.email "logan.brown@tylertech.com"
           git config --global user.name "Logan Brown"
 
-      - name: Release 🚀
+      - name: Create GitHub Release 🚀
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.generate-build-number.outputs.version }}
@@ -115,5 +133,6 @@ jobs:
           files: |
             RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg
             bin/Release/Repo_Library.dll
+            Thunderstore-REPO-Mod-Library-Package-${{ needs.generate-build-number.outputs.version }}.zip
           make_latest: true
           target_commitish: ${{ github.sha }}
