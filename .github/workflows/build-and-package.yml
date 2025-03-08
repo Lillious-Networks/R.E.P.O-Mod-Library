@@ -52,6 +52,7 @@ jobs:
       - name: Create NuGet package manifest 📝
         shell: pwsh
         run: |
+          $releaseNotes = Get-Content -Path "releasenotes.txt" -Raw
           $nuspecContent = @"
           <?xml version="1.0" encoding="utf-8"?>
           <package>
@@ -65,7 +66,7 @@ jobs:
               <requireLicenseAcceptance>false</requireLicenseAcceptance>
               <license type="expression">MIT</license>
               <description>The official mod library for the game R.E.P.O</description>
-              <releaseNotes>releasenotes.txt</releaseNotes>
+              <releaseNotes>$releaseNotes</releaseNotes>
               <copyright>Copyright © 2025</copyright>
               <tags></tags>
               <dependencies>
