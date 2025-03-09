@@ -113,13 +113,28 @@ jobs:
           $thunderstoreMetadata | Out-File -Encoding utf8 -FilePath "manifest.json"
 
           Compress-Archive -Path "bin\Release\Repo_Library.dll", "images\icon.png", "manifest.json", "README.md" -DestinationPath "Thunderstore-REPO-Mod-Library-Package-${{ needs.generate-build-number.outputs.version }}.zip"
-          
+        
+      - name: Create Nexus package 📦
+        run: |
+          Compress-Archive -Path "bin\Release\Repo_Library.dll" -DestinationPath "Nexus-REPO-Mod-Library-Package-${{ needs.generate-build-number.outputs.version }}.zip"
+
       - name: Package Nuspec Metadata 📦
         run: nuget pack Repo_Library.nuspec -OutputDirectory .
 
       - name: Publish Nuget Package 🚀
         if: ${{ github.ref_name == 'master' }} # Only publish to nuget if not a beta release
-        run: nuget push RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }}
+        run: |
+          # Get the latest version
+          $response = nuget search "RepoModLibrary" -Source https://api.nuget.org/v3/index.json
+
+          # Extract the version from the response
+          $version = ($response | Select-String -Pattern '\|\s([\d\.]+)\s\|' ).Matches.Groups[1].Value
+          
+          # Push the new version
+          nuget push RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }} -SkipDuplicate
+          
+          # Unlist the previous version on success
+          nuget delete RepoModLibrary $version -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }}
 
       - name: Set up Git 🛠️
         run: |
@@ -135,6 +150,7 @@ jobs:
             RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg
             bin/Release/Repo_Library.dll
             Thunderstore-REPO-Mod-Library-Package-${{ needs.generate-build-number.outputs.version }}.zip
+            Nexus-REPO-Mod-Library-Package-${{ needs.generate-build-number.outputs.version }}.zip
           make_latest: ${{ github.ref_name == 'master' }}
           prerelease: ${{ github.ref_name == 'beta' }}
           target_commitish: ${{ github.sha }}
