@@ -174,12 +174,12 @@ jobs:
           $attempt = 1
           $success = $false
 
-          Write-Host "Starting installation attempts for RepoModLibrary v${{ needs.get-latest-version.outputs.version }}..."
+          Write-Host "Starting installation attempts for RepoModLibrary v${{ needs.generate-build-number.outputs.version}}..."
 
           while (-not $success -and $attempt -le $maxAttempts) {
               Write-Host "`nAttempt $attempt of $maxAttempts"
               try {
-                  & nuget install RepoModLibrary -Version ${{ needs.get-latest-version.outputs.version }} -NonInteractive
+                  & nuget install RepoModLibrary -Version ${{ needs.generate-build-number.outputs.version }} -NonInteractive
                   if ($LASTEXITCODE -eq 0) {
                       $success = $true
                       Write-Host "`nSuccess! Package installed on attempt $attempt"
