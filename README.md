@@ -108,6 +108,19 @@ The following provides information about the utility functions available in the 
 | `GetPlayerCollision()` | Returns the player's collision component |
 | `SetPlayerCrown(string steamId)` | Updates the player's crown based on the Steam ID |
 | `GetPlayerUpgrades(string steamId)` | Returns the player's upgrade data based on the Steam ID |
+| `UpgradePlayerJump(string steamId)` | Upgrades the player's jump ability |
+| `UpgradePlayerEnergy(string steamId)` | Upgrades the player's energy capacity |
+| `UpgradePlayerGrabRange(string steamId)` | Upgrades the player's grab range |
+| `UpgradePlayerGrabStrength(string steamId)` | Upgrades the player's grab strength |
+| `UpgradePlayerHealth(string steamId)` | Upgrades the player's health capacity |
+| `UpgradePlayerSprintSpeed(string steamId)` | Upgrades the player's sprint speed |
+| `UpgradePlayerThrowStrength(string steamId)` | Upgrades the player's throw strength |
+| `UpgradePlayerTumbleLaunch(string steamId)` | Upgrades the player's tumble launch ability |
+| `UpgradeMapPlayerCount(string steamId)` | Upgrades the player count for the map |
+| `GetPlayerBySteamId(string steamId)` | Returns the player GameObject based on the Steam ID |
+| `GetPlayerByName(string name)` | Returns the player GameObject based on the player name |
+| `GetPlayerSteamId(PlayerAvatar playerAvatar)` | Returns the Steam ID of the player based from the player avatar |
+| `AreAllPlayersInTruck()` | Checks if all players are in the truck lobby |
 
 ### Scene State Management
 
@@ -127,6 +140,8 @@ The following provides information about the utility functions available in the 
 | `IsInTruckLobby()` | Checks if the player is in the truck lobby |
 | `SetInGame(bool value)` | Sets whether the player is in an active game |
 | `IsInGame()` | Checks if the player is in an active game |
+| `GetWindowManager()` | Returns the window manager instance |
+| `GetMenuController()` | Returns the menu controller instance |
 
 ### Level Management
 
@@ -138,11 +153,8 @@ The following provides information about the utility functions available in the 
 | `GetMenuLevels()` | Returns the list of available menu levels |
 | `GetMapObject()` | Returns the current map GameObject |
 | `GetMap()` | Returns the Map component controller from the current map |
-| `GetLevelGenerator()` | Returns the level generator GameObject |
-| `GetGameDirector()` | Returns the GameDirector component from the current map |
-| `GetPostProcessing()` | Returns the PostProcessing component for the current map |
 
-### System Managers
+### System Management
 
 | Function | Description |
 |----------|-------------|
@@ -155,6 +167,20 @@ The following provides information about the utility functions available in the 
 | `GetNetworkManager()` | Returns the network manager instance |
 | `SaveGame(string filename)` | Saves the current game state to a file |
 | `LoadGame(string filename)` | Loads a saved game state from a file |
+| `GetRecordingDirector()` | Returns the recording director instance |
+| `GetReverbDirector()` | Returns the reverb director instance |
+| `GetPunManager()` | Returns the PUN manager instance |
+| `GetRoundDirector()` | Returns the round director instance |
+| `GetShopManager()` | Returns the shop manager instance |
+| `GetSpectateCamera()` | Returns the spectate camera instance |
+| `GetGameDirector()` | Returns the GameDirector component from the current map |
+| `GetPostProcessing()` | Returns the PostProcessing component for the current map |
+| `GetLevelGenerator()` | Returns the level generator GameObject |
+| `GetLightManager()` | Returns the light manager instance |
+| `IsMultiplayer()` | Checks if the game is in multiplayer mode |
+| `IsMasterClient()` | Checks if the player is the master client in multiplayer mode |
+| `GetAllPlayers()` | Returns a list of all players in the game |
+| `GetPlayerCount()` | Returns the current number of players in the game |
 
 ### Enemy Management
 
@@ -168,6 +194,7 @@ The following provides information about the utility functions available in the 
 | `ClearEnemyLines()` | Clears all enemy lines drawn by DrawLineToEnemy() |
 | `SetEnemies(GameObject[] enemies)` | Sets the list of enemies in the current level |
 | `GetEnemies()` | Returns the list of enemies in the current level |
+| `SpawnEnemy(Enemy enemy)` | Spawns an enemy in the level |
 
 ### Item Management
 
@@ -183,6 +210,8 @@ The following provides information about the utility functions available in the 
 | `ClearItemLines()` | Clears all item lines drawn by DrawLineToItem() |
 | `BuyAllItems()` | Buys all items in the shop |
 | `AddItem(string item)` | Adds an item to the player's inventory |
+| `GetValuableDirector()` | Returns the valuable director instance |
+| `UpgradeItemBattery(GameObject item)` | Upgrades the battery of the specified item |
 
 ### Player Control
 
@@ -194,6 +223,8 @@ The following provides information about the utility functions available in the 
 | `SetPlayerAvatar(GameObject playerAvatar)` | Sets the player's avatar GameObject |
 | `GetPlayerAvatar()` | Returns the player's avatar GameObject |
 | `GetPlayerAvatarComponent()` | Returns the player's avatar component |
+| `GetPlayerVoice()` | Returns the player's voice component |
+| `GetPlayerVoiceChat()` | Returns the player's voice chat component |
 
 ### Player Stats Management
 

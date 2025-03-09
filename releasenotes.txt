@@ -1,3 +1,36 @@
+v1.0.53 +
+- Added GetRecordingDirector
+- Added GetReverbDirector
+- Added GetPunManager
+- Added GetPlayerVoice
+- Added GetPlayerVoiceChat
+- Added GetRoundDirector
+- Added GetShopManager
+- Added GetSpectateCamera
+- Added GetValuableDirector
+- Added GetWindowManager
+- Added GetMenuController
+- Added GetLightManager
+- Added UpgradePlayerEnergy
+- Added UpgradePlayerJump
+- Added UpgradePlayerGrabRange
+- Added UpgradePlayerGrabStrength
+- Added UpgradePlayerHealth
+- Added UpgradePlayerSprintSpeed
+- Added UpgradePlayerThrowStrength
+- Added UpgradePlayerTumbleLaunch
+- Added UpgradeItemBattery
+- Added UpgradeMapPlayerCount
+- Added SpawnEnemy
+- Added IsMultiplayer
+- Added IsMasterClient
+- Added GetAllPlayers
+- Added GetPlayerCount
+- Added GetPlayerBySteamId
+- Added GetPlayerByName
+- Added GetPlayerSteamId
+- Added AreAllPlayersInTruck
+
 v1.0.51 +
 - IsInGame now only returns true when the level is fully loaded
 - Added DamagePlayer

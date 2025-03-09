@@ -378,6 +378,56 @@ namespace Repo_Library
             return SharedSceneData.Enemies;
         }
 
+        public RecordingDirector GetRecordingDirector()
+        {
+            return RecordingDirector.instance;
+        }
+        public ReverbDirector GetReverbDirector()
+        {
+            return ReverbDirector.instance;
+        }
+        public PunManager GetPunManager()
+        {
+            return PunManager.instance;
+        }
+
+        public PlayerVoice GetPlayerVoice()
+        {
+            return PlayerVoice.Instance;
+        }
+        public PlayerVoiceChat GetPlayerVoiceChat()
+        {
+            return PlayerVoiceChat.instance;
+        }
+        public RoundDirector GetRoundDirector()
+        {
+            return RoundDirector.instance;
+        }
+        public ShopManager GetShopManager()
+        {
+            return ShopManager.instance;
+        }
+        public SpectateCamera GetSpectateCamera()
+        {
+            return SpectateCamera.instance;
+        }
+        public ValuableDirector GetValuableDirector()
+        {
+            return ValuableDirector.instance;
+        }
+        public WindowManager GetWindowManager()
+        {
+            return WindowManager.instance;
+        }
+        public MenuController GetMenuController()
+        {
+            return MenuController.instance;
+        }
+        public LightManager GetLightManager()
+        {
+            return LightManager.instance;
+        }
+
         // Freeze enemies in the game
         public void FreezeEnemies(bool freeze)
         {
@@ -389,12 +439,72 @@ namespace Repo_Library
             }
         }
 
+        // Upgrade player energy
+        public void UpgradePlayerEnergy()
+        {
+            PunManager.instance.UpgradePlayerEnergy(GetSteamId().ToString());
+        }
+
+        // Upgrade player jump
+        public void UpgradePlayerJump()
+        {
+            PunManager.instance.UpgradePlayerExtraJump(GetSteamId().ToString());
+        }
+
+        // Upgrade player grab range
+        public void UpgradePlayerGrabRange()
+        {
+            PunManager.instance.UpgradePlayerGrabRange(GetSteamId().ToString());
+        }
+
+        // Upgrade player grab strength
+        public void UpgradePlayerGrabStrength()
+        {
+            PunManager.instance.UpgradePlayerGrabStrength(GetSteamId().ToString());
+        }
+
+        // Upgrade player health
+        public void UpgradePlayerHealth()
+        {
+            PunManager.instance.UpgradePlayerHealth(GetSteamId().ToString());
+        }
+
         // Respawn player at a specific position
         public void RespawnPlayer(PlayerController playerController)
         {
             Vector3 respawn = new Vector3(0f, 0f, -21f);
             if (playerController == null) return;
             playerController.gameObject.transform.position = respawn;
+        }
+
+        // Upgrade player sprint speed
+        public void UpgradePlayerSprintSpeed()
+        {
+            PunManager.instance.UpgradePlayerSprintSpeed(GetSteamId().ToString());
+        }
+
+        // Upgrade player throw strength
+        public void UpgradePlayerThrowStrength()
+        {
+            PunManager.instance.UpgradePlayerThrowStrength(GetSteamId().ToString());
+        }
+
+        // Upgrade player tumble launch
+        public void UpgradePlayerTumbleLaunch()
+        {
+            PunManager.instance.UpgradePlayerTumbleLaunch(GetSteamId().ToString());
+        }
+
+        // Upgrade battery
+        public void UpgradeItemBattery(GameObject item)
+        {
+            PunManager.instance.UpgradeItemBattery(item.name);
+        }
+
+        // Upgrade map player count
+        public void UpgradeMapPlayerCount()
+        {
+            PunManager.instance.UpgradeMapPlayerCount(GetSteamId().ToString());
         }
 
         // Teleport player to a vector3 position
@@ -507,6 +617,61 @@ namespace Repo_Library
         {
             if (playerController == null) return;
             playerController.CustomGravity = gravity;
+        }
+
+        // Spawn an enemy in the game
+        public void SpawnEnemy(Enemy enemy)
+        {
+            SemiFunc.EnemySpawn(enemy);
+        }
+
+        // Check if the game is multiplayer
+        public bool IsMultiplayer()
+        {
+            return SemiFunc.IsMultiplayer();
+        }
+
+        // Check if the player is the master client
+        public bool IsMasterClient()
+        {
+            return PhotonNetwork.IsMasterClient;
+        }
+
+        // Get a list of all players
+        public List<PlayerAvatar> GetAllPlayers()
+        {
+            return SemiFunc.PlayerGetAll();
+        }
+
+        // Get player count
+        public int GetPlayerCount()
+        {
+            PlayerAvatar[] players = GetAllPlayers().ToArray();
+            return players.Length;
+        }
+
+        // Get player by steam id
+        public PlayerAvatar GetPlayerBySteamId(string steamId)
+        {
+            return SemiFunc.PlayerGetFromSteamID(steamId);
+        }
+
+        // Get player by name
+        public PlayerAvatar GetPlayerByName(string name)
+        {
+            return SemiFunc.PlayerGetFromName(name);
+        }
+
+        // Get player steam id
+        public string GetPlayerSteamId(PlayerAvatar player)
+        {
+            return SemiFunc.PlayerGetSteamID(player);
+        }
+
+        // Check if all players are in the truck
+        public bool AreAllPlayersInTruck()
+        {
+            return SemiFunc.PlayersAllInTruck();
         }
 
         // Disable enemies in the game
