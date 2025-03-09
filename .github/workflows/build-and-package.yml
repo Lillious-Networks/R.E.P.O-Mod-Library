@@ -167,10 +167,10 @@ jobs:
           # Wait for the package to be indexed and verified by nuget
           # This is a workaround for the fact that nuget doesn't always index packages immediately
           # and we need to wait for it to be available before we can delete the previous version
-          # 30 attempts * 30 seconds = 900 seconds = 15 minutes
+          # 60 attempts * 60 seconds = 3600 seconds = 1 hour
 
-          $maxAttempts = 30
-          $delaySeconds = 30
+          $maxAttempts = 60
+          $delaySeconds = 60
           $attempt = 1
           $success = $false
 
