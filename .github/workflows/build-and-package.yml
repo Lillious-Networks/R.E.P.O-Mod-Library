@@ -30,9 +30,24 @@ jobs:
           $buildNumber = "1.0.${{ github.run_number }}"
           echo "version=$buildNumber" >> $env:GITHUB_OUTPUT
 
+  get-latest-version:
+    name: Get Latest Version 🔢
+    runs-on: windows-latest
+    outputs:
+      version: ${{ steps.get-latest-version.outputs.version }}
+    steps:
+      - name: Get Latest Version 🔢
+        id: get-latest-version
+        run: |
+          $response = nuget search "RepoModLibrary" -Source https://api.nuget.org/v3/index.json
+
+          # Extract the version from the response
+          $version = ($response | Select-String -Pattern '\|\s([\d\.]+)\s\|' ).Matches.Groups[1].Value
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+
   build:
     name: "Build ${{ needs.generate-build-number.outputs.version }}${{ github.ref_name == 'beta' && ' (Beta)' || '' }} Release 🏗️🔗"
-    needs: generate-build-number
+    needs: [generate-build-number, get-latest-version]
     concurrency:
       group: build
       cancel-in-progress: true
@@ -124,18 +139,8 @@ jobs:
       - name: Publish Nuget Package 🚀
         if: ${{ github.ref_name == 'master' }} # Only publish to nuget if not a beta release
         run: |
-          # Get the latest version
-          $response = nuget search "RepoModLibrary" -Source https://api.nuget.org/v3/index.json
-
-          # Extract the version from the response
-          $version = ($response | Select-String -Pattern '\|\s([\d\.]+)\s\|' ).Matches.Groups[1].Value
-          
-          # Push the new version
           nuget push RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }} -SkipDuplicate
           
-          # Unlist the previous version on success
-          nuget delete RepoModLibrary $version -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }} -NonInteractive
-
       - name: Set up Git 🛠️
         run: |
           git config --global user.email "logan.brown@tylertech.com"
@@ -156,3 +161,45 @@ jobs:
           target_commitish: ${{ github.sha }}
           body_path: releasenotes.txt
 
+      - name: Delete Previous Version 🗑️
+        if: ${{ github.ref_name == 'master' }}
+        run: |
+          # Wait for the package to be indexed and verified by nuget
+          # This is a workaround for the fact that nuget doesn't always index packages immediately
+          # and we need to wait for it to be available before we can delete the previous version
+          # 30 attempts * 30 seconds = 900 seconds = 15 minutes
+
+          $maxAttempts = 30
+          $delaySeconds = 30
+          $attempt = 1
+          $success = $false
+
+          Write-Host "Starting installation attempts for RepoModLibrary v${{ needs.get-latest-version.outputs.version }}..."
+
+          while (-not $success -and $attempt -le $maxAttempts) {
+              Write-Host "`nAttempt $attempt of $maxAttempts"
+              try {
+                  & nuget install RepoModLibrary -Version ${{ needs.get-latest-version.outputs.version }} -NonInteractive
+                  if ($LASTEXITCODE -eq 0) {
+                      $success = $true
+                      Write-Host "`nSuccess! Package installed on attempt $attempt"
+                  } else {
+                      throw "NuGet command failed with exit code $LASTEXITCODE"
+                  }
+              } catch {
+                  Write-Host "Attempt $attempt failed: $_"
+                  if ($attempt -lt $maxAttempts) {
+                      Write-Host "Waiting $delaySeconds seconds before next attempt..."
+                      Start-Sleep -Seconds $delaySeconds
+                  }
+                  $attempt++
+              }
+          }
+
+          if (-not $success) {
+              Write-Host "`nNot deleting previous version because the latest version was not verified by nuget after $maxAttempts attempts."
+              exit 1
+          } else {
+              Write-Host "`nDeleting previous version..."
+              nuget delete RepoModLibrary ${{ needs.get-latest-version.outputs.version }} -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }} -NonInteractive
+          }
