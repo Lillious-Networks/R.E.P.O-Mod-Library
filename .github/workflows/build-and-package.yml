@@ -134,7 +134,7 @@ jobs:
           nuget push RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }} -SkipDuplicate
           
           # Unlist the previous version on success
-          nuget delete RepoModLibrary $version -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }}
+          nuget delete RepoModLibrary $version -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }} -np
 
       - name: Set up Git 🛠️
         run: |
