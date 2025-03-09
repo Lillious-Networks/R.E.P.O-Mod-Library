@@ -102,7 +102,7 @@ jobs:
         run: |
           $thunderstoreMetadata = @"
           {
-              "name": "Official_REPO_Mod_Library",
+              "name": "REPO_Mod_Library",
               "description": "A mod library with developer friendly syntax with the goal of simplifying writing repetitive and ugly code.",
               "version_number": "${{ needs.generate-build-number.outputs.version }}",
               "dependencies": [],
