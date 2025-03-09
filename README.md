@@ -107,16 +107,6 @@ The following provides information about the utility functions available in the 
 | `GetPlayerController()` | Returns the player's PlayerController instance |
 | `GetPlayerCollision()` | Returns the player's collision component |
 | `SetPlayerCrown(string steamId)` | Updates the player's crown based on the Steam ID |
-| `GetPlayerUpgrades(string steamId)` | Returns the player's upgrade data based on the Steam ID |
-| `UpgradePlayerJump(string steamId)` | Upgrades the player's jump ability |
-| `UpgradePlayerEnergy(string steamId)` | Upgrades the player's energy capacity |
-| `UpgradePlayerGrabRange(string steamId)` | Upgrades the player's grab range |
-| `UpgradePlayerGrabStrength(string steamId)` | Upgrades the player's grab strength |
-| `UpgradePlayerHealth(string steamId)` | Upgrades the player's health capacity |
-| `UpgradePlayerSprintSpeed(string steamId)` | Upgrades the player's sprint speed |
-| `UpgradePlayerThrowStrength(string steamId)` | Upgrades the player's throw strength |
-| `UpgradePlayerTumbleLaunch(string steamId)` | Upgrades the player's tumble launch ability |
-| `UpgradeMapPlayerCount(string steamId)` | Upgrades the player count for the map |
 | `GetPlayerBySteamId(string steamId)` | Returns the player GameObject based on the Steam ID |
 | `GetPlayerByName(string name)` | Returns the player GameObject based on the player name |
 | `GetPlayerSteamId(PlayerAvatar playerAvatar)` | Returns the Steam ID of the player based from the player avatar |
@@ -252,6 +242,18 @@ The following provides information about the utility functions available in the 
 | `GetPlayerHealth()` | Gets the player's current health |
 | `SetPlayerHealth(int health)` | Sets the player's current health |
 | `ResetStats()` | Resets the player's stats to default values |
+| `SetCurrency(int currency)` | Sets the player's currency amount |
+| `SetGodMode(bool on)` | Sets the player's god mode on or off |
+| `GetPlayerUpgrades(string steamId)` | Returns the player's upgrade data based on the Steam ID |
+| `UpgradePlayerJump(string steamId)` | Upgrades the player's jump ability |
+| `UpgradePlayerEnergy(string steamId)` | Upgrades the player's energy capacity |
+| `UpgradePlayerGrabRange(string steamId)` | Upgrades the player's grab range |
+| `UpgradePlayerGrabStrength(string steamId)` | Upgrades the player's grab strength |
+| `UpgradePlayerHealth(string steamId)` | Upgrades the player's health capacity |
+| `UpgradePlayerSprintSpeed(string steamId)` | Upgrades the player's sprint speed |
+| `UpgradePlayerThrowStrength(string steamId)` | Upgrades the player's throw strength |
+| `UpgradePlayerTumbleLaunch(string steamId)` | Upgrades the player's tumble launch ability |
+| `UpgradeMapPlayerCount(string steamId)` | Upgrades the player count for the map |
 
 
 ## Credits

@@ -1,3 +1,7 @@
+v1.0.54 +
+- Added SetGodMode
+- Added SetCurrency
+
 v1.0.53 +
 - Added GetRecordingDirector
 - Added GetReverbDirector

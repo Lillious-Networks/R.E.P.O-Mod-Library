@@ -7,6 +7,7 @@ using Steamworks;
 using Photon.Pun;
 
 using System.Linq;
+using System.Reflection;
 
 [assembly: MelonInfo(typeof(Library), "R.E.P.O Mod Library", "1.0.0", "Lillious & .Zer0")]
 [assembly: MelonGame("semiwork", "REPO")]
@@ -710,6 +711,18 @@ namespace Repo_Library
         public GameObject GetPlayerAvatarObject()
         {
             return GameObject.Find("PlayerAvatar(Clone)").transform.Find("Player Avatar Controller").gameObject;
+        }
+
+        // Set god mode for the player
+        public void SetGodMode(bool on)
+        {
+            typeof(PlayerHealth).GetField("godMode", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(GetPlayerAvatar().playerHealth, on);
+        }
+
+        // Set currency
+        public void SetCurrency(int currency)
+        {
+            StatsManager.instance.runStats["currency"] = currency;
         }
 
         // Get max health of the player
