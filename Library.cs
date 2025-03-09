@@ -29,114 +29,73 @@ namespace Repo_Library
         public static GameObject[] Items { get; set; }
     }
 
-    public class SharedSystemData
-    {
-        public static StatsManager StatsManager { get; set; }
-        public static RunManager RunManager { get; set; }
-        public static GraphicsManager GraphicsManager { get; set; }
-        public static GameplayManager GameplayManager { get; set; }
-        public static AssetManager AssetManager { get; set; }
-        public static AudioManager AudioManager { get; set; }
-        public static NetworkManager NetworkManager { get; set; }
-        public static GameObject LevelGenerator { get; set; }
-        public static GameObject GameDirector { get; set; }
-        public static PostProcessing PostProcessing { get; set; }
-    }
-
     public class SharedPlayerData
     {
-        public static PlayerController PlayerController { get; set; }
-        public static PlayerCollision PlayerCollision { get; set; }
         public static ulong SteamId { get; set; }
-        public static GameObject PlayerAvatar { get; set; }
-        public static GameObject PlayerControllerObject { get; set; }
     }
 
     public class Library : MelonMod
     { 
-        // Set controllers for the player
-        public async void SetPlayerData()
-        {
-            await Task.Delay(2000);
-            GameObject player = GameObject.Find("Player").transform.Find("Controller").gameObject;
-            GameObject collision = player.transform.Find("Collision").gameObject;
-            GameObject PlayerAvatar = GameObject.Find("PlayerAvatar(Clone)").transform.Find("Player Avatar Controller").gameObject;
-
-            PlayerController playerController = player.GetComponent<PlayerController>();
-            PlayerCollision playerCollision = collision.GetComponent<PlayerCollision>();
-
-            SetPlayerControllerObject(player);
-            SetPlayerController(playerController);
-            SetPlayerCollision(playerCollision);
-            SetPlayerAvatar(PlayerAvatar);
-
-            SetInGame(true);
-        }
-
         // Set scene data for the game
         public async void SetSceneData()
         {
-            await Task.Delay(2000);
-            StatsManager statsManager = GameObject.Find("Stats Manager").GetComponent<StatsManager>();
-            SetStatsManager(statsManager);
-
-            GraphicsManager graphicsManager = GameObject.Find("Graphics Manager").GetComponent<GraphicsManager>();
-            SetGraphicsManager(graphicsManager);
-
-            GameplayManager gameplayManager = GameObject.Find("Gameplay Manager").GetComponent<GameplayManager>();
-            SetGameplayManager(gameplayManager);
-
-            AssetManager assetManager = GameObject.Find("Asset Manager").GetComponent<AssetManager>();
-            SetAssetManager(assetManager);
-
-            AudioManager audioManager = GameObject.Find("Audio Manager").GetComponent<AudioManager>();
-            SetAudioManager(audioManager);
-
-            NetworkManager networkManager = GameObject.Find("Network Manager").GetComponent<NetworkManager>();
-            SetNetworkManager(networkManager);
-
-            GameObject map = GameObject.Find("Map").gameObject;
-            SetMap(map);
-
-            GameObject levelGenerator = GameObject.Find("Level Generator").gameObject;
-            SetLevelGenerator(levelGenerator);
-
-            GameObject gameDirector = GameObject.Find("Game Director").gameObject;
-            SetGameDirector(gameDirector);
-
-            PostProcessing postProcessing = GetGameDirector().transform.Find("Post Processing").transform.Find("Post Processing Main").GetComponent<PostProcessing>();
-            SetPostProcessing(postProcessing);
-
-            GameObject enemies = levelGenerator.transform.Find("Enemies").gameObject;
-            List<GameObject> enemyList = new List<GameObject>();
-            foreach (Transform child in enemies.transform)
+            LevelGenerator levelGenerator = LevelGenerator.Instance;
+            while (LevelGenerator.Instance == null)
             {
-                GameObject childGameObject = child.gameObject;
-                enemyList.Add(childGameObject);
+                await Task.Delay(100);
+                levelGenerator = LevelGenerator.Instance;
             }
-            SetEnemies(enemyList.ToArray());
+
+            // Wait for the level to be generated before setting up the game data
+            while (!LevelGenerator.Instance.Generated)
+            {
+                await Task.Delay(100);
+            }
+
+            GameObject enemies = GameObject.Find("Level Generator").transform.Find("Enemies")?.gameObject;
+            if (enemies == null)
+            {
+                MelonLogger.Msg("Unable to locate Enemies");
+            } else
+            {
+                List<GameObject> enemyList = new List<GameObject>();
+                foreach (Transform child in enemies.transform)
+                {
+                    GameObject childGameObject = child.gameObject;
+                    enemyList.Add(childGameObject);
+                }
+                SetEnemies(enemyList.ToArray());
+            }
 
             // Check if the item has ValueableObject component
             GameObject[] items = GameObject.FindGameObjectsWithTag("Phys Grab Object");
-            // Filter out items that don't have ValueableObject component
-            foreach (GameObject item in items)
+            if (items == null || items.Length == 0)
+            {
+                MelonLogger.Msg("Unable to locate items");
+            } else
             {
                 // Filter out items that don't have ValueableObject component
-                ValuableObject valuableObject = item.GetComponent<ValuableObject>();
-                if (valuableObject == null)
+                foreach (GameObject item in items)
                 {
-                    items = items.Where(val => val != item).ToArray();
+                    // Filter out items that don't have ValueableObject component
+                    ValuableObject valuableObject = item.GetComponent<ValuableObject>();
+                    if (valuableObject == null)
+                    {
+                        items = items.Where(val => val != item).ToArray();
+                    }
                 }
+
+                SetItems(items);
             }
 
-            SetItems(items);
+            // Everything has been initialized
+            SetInGame(true);
         }
 
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
         {
             // Set the run manager for the game that determines the current level
-            RunManager runManager = GameObject.Find("Run Manager").GetComponent<RunManager>();
-            SetRunManager(runManager);
+            RunManager runManager = RunManager.instance;
 
             // Set and store levels for the game
             if (!IsInitialized())
@@ -199,7 +158,6 @@ namespace Repo_Library
             // Checks if the player is in game
             if (!SharedSceneData.Menus.Contains(runManager.levelCurrent))
             {
-                SetPlayerData();
                 SetSceneData();
             }
             else
@@ -212,21 +170,6 @@ namespace Repo_Library
         public void SetSteamId(ulong steamId)
         {
             SharedPlayerData.SteamId = steamId;
-        }
-
-        public void SetPlayerController(PlayerController playerController)
-        {
-            SharedPlayerData.PlayerController = playerController ?? null;
-        }
-
-        public void SetPlayerControllerObject(GameObject playerController)
-        {
-            SharedPlayerData.PlayerControllerObject = playerController ?? null;
-        }
-
-        public void SetPlayerCollision(PlayerCollision playerCollision)
-        {
-            SharedPlayerData.PlayerCollision = playerCollision ?? null;
         }
 
         public void SetInititialized(bool value)
@@ -272,64 +215,6 @@ namespace Repo_Library
         public void SetInGame(bool value)
         {
             SharedSceneData.IsInGame = value;
-        }
-
-        public void SetStatsManager(StatsManager statsManager)
-        {
-            SharedSystemData.StatsManager = statsManager;
-        }
-
-        public void SetRunManager(RunManager runManager)
-        {
-            SharedSystemData.RunManager = runManager;
-        }
-        public void SetGraphicsManager(GraphicsManager graphicsManager)
-        {
-            SharedSystemData.GraphicsManager = graphicsManager;
-        }
-        public void SetGameplayManager(GameplayManager gameplayManager)
-        {
-            SharedSystemData.GameplayManager = gameplayManager;
-        }
-
-        public void SetAssetManager(AssetManager assetManager)
-        {
-            SharedSystemData.AssetManager = assetManager;
-        }
-
-        public void SetAudioManager(AudioManager audioManager)
-        {
-            SharedSystemData.AudioManager = audioManager;
-        }
-
-        public void SetNetworkManager(NetworkManager networkManager)
-        {
-            SharedSystemData.NetworkManager = networkManager;
-        }
-
-        public void SetMap(GameObject map)
-        {
-            SharedSceneData.Map = map;
-        }
-
-        public void SetLevelGenerator(GameObject levelGenerator)
-        {
-            SharedSystemData.LevelGenerator = levelGenerator;
-        }
-
-        public void SetGameDirector(GameObject gameDirector)
-        {
-            SharedSystemData.GameDirector = gameDirector;
-        }
-
-        public static void SetPostProcessing(PostProcessing postProcessing)
-        {
-            SharedSystemData.PostProcessing = postProcessing;
-        }
-
-        public static void SetPlayerAvatar(GameObject playerAvatar)
-        {
-            SharedPlayerData.PlayerAvatar = playerAvatar;
         }
 
         public void SetEnemies(GameObject[] enemies)
@@ -405,88 +290,81 @@ namespace Repo_Library
 
         public PlayerController GetPlayerController()
         {
-            return SharedPlayerData.PlayerController;
+            return PlayerController.instance;
         }
         public GameObject GetPlayerControllerObject()
         {
-            return SharedPlayerData.PlayerControllerObject;
+            return GameObject.Find("Player").transform.Find("Controller").gameObject;
         }
 
         public PlayerCollision GetPlayerCollision()
         {
-            return SharedPlayerData.PlayerCollision;
+            return PlayerCollision.instance;
         }
 
         public StatsManager GetStatsManager()
         {
-            return SharedSystemData.StatsManager;
+            return StatsManager.instance;
         }
 
         public RunManager GetRunManager()
         {
-            return SharedSystemData.RunManager;
+            return RunManager.instance;
         }
 
         public GraphicsManager GetGraphicsManager()
         {
-            return SharedSystemData.GraphicsManager;
+            return GraphicsManager.instance;
         }
 
         public GameplayManager GetGameplayManager()
         {
-            return SharedSystemData.GameplayManager;
+            return GameplayManager.instance;
         }
 
         public AssetManager GetAssetManager()
         {
-            return SharedSystemData.AssetManager;
+            return AssetManager.instance;
         }
 
         public AudioManager GetAudioManager()
         {
-            return SharedSystemData.AudioManager;
+            return AudioManager.instance;
         }
 
         public NetworkManager GetNetworkManager()
         {
-            return SharedSystemData.NetworkManager;
+            return NetworkManager.instance;
         }
 
-        public GameObject GetMap()
+        public GameObject GetMapObject()
         {
             return SharedSceneData.Map;
         }
 
-        public Map GetMapContoller ()
+        public Map GetMap ()
         {
-            return SharedSceneData.Map.transform.Find("Map Controller").GetComponent<Map>();
-        }
-        public GameObject GetLevelGenerator()
-        {
-            return SharedSystemData.LevelGenerator;
-        }
+            return Map.Instance;
 
-        public LevelGenerator GetLevelGeneratorController()
+        }
+        public LevelGenerator GetLevelGenerator()
         {
-            return SharedSystemData.LevelGenerator.GetComponent<LevelGenerator>();
+            return LevelGenerator.Instance;
         }
         
-        public GameObject GetGameDirector()
+        public GameDirector GetGameDirector()
         {
-            return SharedSystemData.GameDirector;
+            return GameDirector.instance;
         }
 
-        public GameDirector GetGameDirectorController()
-        {
-            return SharedSystemData.GameDirector.GetComponent<GameDirector>();
-        }
         public PostProcessing GetPostProcessing()
         {
-            return SharedSystemData.PostProcessing;
+            return PostProcessing.Instance;
         }
-        public GameObject GetPlayerAvatar()
+
+        public PlayerAvatar GetPlayerAvatar()
         {
-            return SharedPlayerData.PlayerAvatar;
+            return PlayerAvatar.instance;
         }
 
         public int GetEnemyCount()
@@ -663,10 +541,88 @@ namespace Repo_Library
             }
         }
 
+        // Get player avatar object
+        public GameObject GetPlayerAvatarObject()
+        {
+            return GameObject.Find("PlayerAvatar(Clone)").transform.Find("Player Avatar Controller").gameObject;
+        }
+
+        // Get max health of the player
+        public int GetPlayerMaxHealth()
+        {
+            return 100 + StatsManager.instance.GetPlayerMaxHealth(SemiFunc.PlayerGetSteamID(PlayerAvatar.instance));
+        }
+
+        // Get current health of the player
+        public int GetPlayerHealth()
+        {
+            return StatsManager.instance.GetPlayerHealth(SemiFunc.PlayerGetSteamID(PlayerAvatar.instance));
+        }
+
         // Heal player
         public void HealPlayer(GameObject playerAvatar, int health)
         {
             playerAvatar.GetComponent<PlayerHealth>().Heal(health, true);
+        }
+
+        // Heal player to max health
+        public void HealPlayerMax(GameObject playerAvatar)
+        {
+            playerAvatar.GetComponent<PlayerHealth>().Heal(GetPlayerMaxHealth(), true);
+        }
+
+        // Set player health to a specific value
+        public void SetPlayerHealth(int health)
+        {
+            StatsManager.instance.SetPlayerHealth(SemiFunc.PlayerGetSteamID(PlayerAvatar.instance), health, false);
+        }
+
+        // Reset stats
+        public void ResetStats()
+        {
+            StatsManager.instance.ResetAllStats();
+        }
+
+        // Buy all items
+        public void BuyAllItems()
+        {
+            StatsManager.instance.BuyAllItems();
+        }
+
+        // Damage player
+        public void DamagePlayer(GameObject playerAvatar, int damage)
+        {   
+            playerAvatar.GetComponent<PlayerHealth>().Hurt(damage, false);
+        }
+
+        // Save game
+        public void SaveGame(string filename)
+        {
+            StatsManager.instance.SaveGame(filename);
+        }
+
+        // Load game
+        public void LoadGame(string filename)
+        {
+            StatsManager.instance.LoadGame(filename);
+        }
+
+        // Update which player has the crown
+        public void SetPlayerCrown(string steamId)
+        {
+            StatsManager.instance.UpdateCrown(steamId);
+        }
+
+        // Get player upgrades
+        public Dictionary<string, int> GetPlayerUpgrades(string steamId)
+        {
+            return StatsManager.instance.FetchPlayerUpgrades(steamId);
+        }
+
+        // Add an item
+        public void AddItem(string item)
+        {
+            StatsManager.instance.ItemAdd(item);
         }
 
         // Spawn an item in the game

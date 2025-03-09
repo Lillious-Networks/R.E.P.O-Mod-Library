@@ -1,3 +1,19 @@
+v1.0.51 +
+- IsInGame now only returns true when the level is fully loaded
+- Added DamagePlayer
+- Removed all Set data methods in favor of using .instance
+- Added GetPlayerMaxHealth
+- Added GetPlayerHealth
+- Added HealPlayerMax
+- Added SetPlayerHealth
+- Added ResetStats
+- Added BuyAllItems
+- Added SetPlayerCrown
+- Added SaveGame
+- Added LoadGame
+- Added GetPlayerUpgrades
+- Added AddItem
+
 v1.0.37 +
 - GetItems now correctly returns a filtered list of valuables instead of all items
 - Added ClearEnemyLines

@@ -104,10 +104,10 @@ The following provides information about the utility functions available in the 
 |----------|-------------|
 | `SetSteamId(ulong steamId)` | Sets the player's Steam ID |
 | `GetSteamId()` | Returns the player's Steam ID |
-| `SetPlayerController(PlayerController playerController)` | Associates a PlayerController with the player data |
 | `GetPlayerController()` | Returns the player's PlayerController instance |
-| `SetPlayerCollision(PlayerCollision playerCollision)` | Sets the player's collision component |
 | `GetPlayerCollision()` | Returns the player's collision component |
+| `SetPlayerCrown(string steamId)` | Updates the player's crown based on the Steam ID |
+| `GetPlayerUpgrades(string steamId)` | Returns the player's upgrade data based on the Steam ID |
 
 ### Scene State Management
 
@@ -136,36 +136,25 @@ The following provides information about the utility functions available in the 
 | `GetLevels()` | Returns the list of available game levels |
 | `SetMenuLevels(List<Level> levels)` | Sets the available menu levels |
 | `GetMenuLevels()` | Returns the list of available menu levels |
-| `SetMap(GameObject map)` | Sets the current map GameObject |
-| `GetMap()` | Returns the current map GameObject |
-| `GetMapContoller()` | Returns the Map component controller from the current map |
-| `SetLevelGenerator(GameObject levelGenerator)` | Sets the level generator GameObject |
+| `GetMapObject()` | Returns the current map GameObject |
+| `GetMap()` | Returns the Map component controller from the current map |
 | `GetLevelGenerator()` | Returns the level generator GameObject |
-| `GetLevelGeneratorController()` | Returns the LevelGenerator component from the level generator |
-| `GetGameDirector(GameObject gameDirector)` | Returns the GameDirector component from the specified GameObject |
-| `SetGameDirector(GameObject gameDirector)` | Sets the GameDirector component from the specified GameObject |
-| `GetGameDirectorController()` | Returns the GameDirector component from the current map |
-| `SetPostProcessing(PostProcessing postProcessing)` | Sets the PostProcessing component for the current map |
+| `GetGameDirector()` | Returns the GameDirector component from the current map |
 | `GetPostProcessing()` | Returns the PostProcessing component for the current map |
 
 ### System Managers
 
 | Function | Description |
 |----------|-------------|
-| `SetStatsManager(StatsManager statsManager)` | Sets the stats manager instance |
 | `GetStatsManager()` | Returns the stats manager instance |
-| `SetRunManager(RunManager runManager)` | Sets the run manager instance |
 | `GetRunManager()` | Returns the run manager instance |
-| `SetGraphicsManager(GraphicsManager graphicsManager)` | Sets the graphics manager instance |
 | `GetGraphicsManager()` | Returns the graphics manager instance |
-| `SetGameplayManager(GameplayManager gameplayManager)` | Sets the gameplay manager instance |
 | `GetGameplayManager()` | Returns the gameplay manager instance |
-| `SetAssetManager(AssetManager assetManager)` | Sets the asset manager instance |
 | `GetAssetManager()` | Returns the asset manager instance |
-| `SetAudioManager(AudioManager audioManager)` | Sets the audio manager instance |
 | `GetAudioManager()` | Returns the audio manager instance |
-| `SetNetworkManager(NetworkManager networkManager)` | Sets the network manager instance |
 | `GetNetworkManager()` | Returns the network manager instance |
+| `SaveGame(string filename)` | Saves the current game state to a file |
+| `LoadGame(string filename)` | Loads a saved game state from a file |
 
 ### Enemy Management
 
@@ -192,6 +181,8 @@ The following provides information about the utility functions available in the 
 | `GetItems()` | Returns the list of items in the map |
 | `DrawLineToItem()` | Draws a line from the player to all items in the map and displays distance |
 | `ClearItemLines()` | Clears all item lines drawn by DrawLineToItem() |
+| `BuyAllItems()` | Buys all items in the shop |
+| `AddItem(string item)` | Adds an item to the player's inventory |
 
 ### Player Control
 
@@ -199,11 +190,10 @@ The following provides information about the utility functions available in the 
 |----------|-------------|
 | `RespawnPlayer(PlayerController playerController)` | Instantly moves the player to a default spawn point (0, 0, -21) |
 | `TeleportPlayer(PlayerController playerController, Vector3 position)` | Teleports the player to a specified position |
-| `AntiGravity(PlayerController playerController, float time)` | Applies anti-gravity effect to the player for the specified duration |
-| `HealPlayer(GameObject playerAvatar, int health)` | Heals the player by the specified amount |
 | `DestroyObject()` | Destroys breakable objects close to the player |
 | `SetPlayerAvatar(GameObject playerAvatar)` | Sets the player's avatar GameObject |
 | `GetPlayerAvatar()` | Returns the player's avatar GameObject |
+| `GetPlayerAvatarComponent()` | Returns the player's avatar component |
 
 ### Player Stats Management
 
@@ -223,6 +213,14 @@ The following provides information about the utility functions available in the 
 | `SetSpeedUpgradeAmounts(PlayerController playerController, int amount)` | Sets the number of speed upgrades the player has |
 | `GetCustomGravity(PlayerController playerController)` | Gets the custom gravity value for the player |
 | `SetCustomGravity(PlayerController playerController, float gravity)` | Sets a custom gravity value for the player |
+| `AntiGravity(PlayerController playerController, float time)` | Applies anti-gravity effect to the player for the specified duration |
+| `HealPlayer(GameObject playerAvatar, int health)` | Heals the player by the specified amount |
+| `HealPlayerMax(GameObject playerAvatar)` | Heals the player to full health |
+| `DamagePlayer(GameObject playerAvatar, int damage)` | Damages the player by the specified amount |
+| `GetPlayerMaxHealth()` | Gets the player's maximum health |
+| `GetPlayerHealth()` | Gets the player's current health |
+| `SetPlayerHealth(int health)` | Sets the player's current health |
+| `ResetStats()` | Resets the player's stats to default values |
 
 
 ## Credits
