@@ -173,7 +173,7 @@ jobs:
           while (-not $success -and $attempt -le $maxAttempts) {
               Write-Host "`nAttempt $attempt of $maxAttempts"
               try {
-                  & nuget install RepoModLibrary -Version ${{ needs.generate-build-number.outputs.version }} -NonInteractive
+                  & nuget install RepoModLibrary -Version ${{ needs.generate-build-number.outputs.version }} -NonInteractive -Source https://api.nuget.org/v3/index.json
                   if ($LASTEXITCODE -eq 0) {
                       $success = $true
                       Write-Host "`nSuccess! Package installed on attempt $attempt"
