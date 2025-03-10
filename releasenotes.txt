@@ -1,3 +1,6 @@
+v1.0.57 +
+- Update Unity dependencies to use bepinex nuget source
+
 v1.0.55 +
 - Bug Fix: ESP lines now no longer render for destroyed items / enemies
 
