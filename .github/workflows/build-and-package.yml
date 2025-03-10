@@ -87,23 +87,17 @@ jobs:
               <tags></tags>
               <dependencies>
                 <dependency id="LavaGang.MelonLoader" version="0.7.0" />
+                <dependency id="Facepunch.Steamworks" version="2.3.3" />
+                <dependency id="UnityEngine.Modules" version="2022.3.21" />
               </dependencies>
             </metadata>
             <files>
               <file src="bin\Release\Repo_Library.dll" target="lib"/>
               <file src="bin\Release\Assembly-CSharp.dll" target="lib"/>
-              <file src="bin\Release\UnityEngine.CoreModule.dll" target="lib"/>
-              <file src="bin\Release\UnityEngine.dll" target="lib"/>
-              <file src="bin\Release\Unity.InputSystem.dll" target="lib"/>
-              <file src="bin\Release\UnityEngine.InputLegacyModule.dll" target="lib"/>
-              <file src="bin\Release\UnityEngine.InputModule.dll" target="lib"/>
-              <file src="bin\Release\Facepunch.Steamworks.Win64.dll" target="lib"/>
               <file src="bin\Release\PhotonUnityNetworking.dll" target="lib"/>
               <file src="bin\Release\PhotonUnityNetworking.Utilities.dll" target="lib"/>
               <file src="bin\Release\Unity.TextMeshPro.dll" target="lib"/>
-              <file src="bin\Release\UnityEngine.TextCoreFontEngineModule.dll" target="lib"/>
-              <file src="bin\Release\UnityEngine.TextCoreTextEngineModule.dll" target="lib"/>
-              <file src="bin\Release\UnityEngine.TextRenderingModule.dll" target="lib"/>
+              <file src="bin\Release\Facepunch.Steamworks.Win64.dll" target="lib"/>
               <file src="README.md" target="."/>
               <file src="images\icon.png" target="."/>
               <file src="releasenotes.txt" target="."/>
