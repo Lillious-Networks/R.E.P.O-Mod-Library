@@ -919,8 +919,13 @@ namespace Repo_Library
         public void ClearEnemyLines()
         {
             GameObject[] enemies = GetEnemies().ToArray();
+            if (enemies == null || enemies.Length == 0) return;
             foreach (GameObject enemy in enemies)
             {
+                if (enemy == null)
+                {
+                    continue;
+                }
                 LineRenderer line = enemy.GetComponent<LineRenderer>();
                 if (line != null)
                 {
@@ -936,9 +941,14 @@ namespace Repo_Library
 
         public void ClearItemLines()
         {
-            GameObject[] items = GetItems();
+            GameObject[] items = GetItems().ToArray();
+            if (items == null || items.Length == 0) return;
             foreach (GameObject item in items)
             {
+                if (item == null)
+                {
+                    continue;
+                }
                 LineRenderer line = item.GetComponent<LineRenderer>();
                 if (line != null)
                 {

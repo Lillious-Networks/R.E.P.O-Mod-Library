@@ -1,3 +1,6 @@
+v1.0.55 +
+- Bug Fix: ESP lines now no longer render for destroyed items / enemies
+
 v1.0.54 +
 - Added SetGodMode
 - Added SetCurrency
