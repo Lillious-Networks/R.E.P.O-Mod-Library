@@ -1,4 +1,4 @@
-v1.0.57 +
+v1.0.58 +
 - Update Unity dependencies to use bepinex nuget source
 
 v1.0.55 +
