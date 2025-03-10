@@ -87,7 +87,6 @@ jobs:
               <tags></tags>
               <dependencies>
                 <dependency id="LavaGang.MelonLoader" version="0.7.0" />
-                <dependency id="Facepunch.Steamworks" version="2.3.3" />
                 <dependency id="UnityEngine.Modules" version="2022.3.21" />
               </dependencies>
             </metadata>
