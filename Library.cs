@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Steamworks;
 using Photon.Pun;
-
 using System.Linq;
 using System.Reflection;
 
@@ -626,6 +625,44 @@ namespace Repo_Library
             SemiFunc.EnemySpawn(enemy);
         }
 
+        // Kill a player
+        public void KillPlayer(PlayerAvatar playerAvatar)
+        {
+            playerAvatar.PlayerDeath(0);
+        }
+
+        // Kill all players
+        public void KillAllPlayers()
+        {
+            PlayerAvatar[] players = GetAllPlayers().ToArray();
+            foreach (PlayerAvatar player in players)
+            {
+                player.PlayerDeath(0);
+            }
+        }
+
+        // Revive a player
+        public void RevivePlayer(PlayerAvatar playerAvatar)
+        {
+            playerAvatar.Revive(false);
+        }
+
+        // Revive all players
+        public void ReviveAllPlayers()
+        {
+            PlayerAvatar[] players = GetAllPlayers().ToArray();
+            foreach (PlayerAvatar player in players)
+            {
+                player.Revive(false);
+            }
+        }
+
+        // Send a message as a player
+        public void SendMessage(PlayerAvatar playerAvatar, string message)
+        {
+            playerAvatar.ChatMessageSend(message, false);
+        }
+
         // Check if the game is multiplayer
         public bool IsMultiplayer()
         {
@@ -636,6 +673,22 @@ namespace Repo_Library
         public bool IsMasterClient()
         {
             return PhotonNetwork.IsMasterClient;
+        }
+
+        // Player Tumble
+        public void PlayerTumble(PlayerAvatar playerAvatar)
+        {
+            playerAvatar.tumble.TumbleSet(true, false);
+        }
+
+        // Player Tumble All
+        public void PlayerTumbleAll()
+        {
+            PlayerAvatar[] players = GetAllPlayers().ToArray();
+            foreach (PlayerAvatar player in players)
+            {
+                player.tumble.TumbleSet(true, false);
+            }
         }
 
         // Get a list of all players

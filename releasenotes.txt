@@ -1,3 +1,12 @@
+v1.0.62 +
+- Added KillPlayer
+- Added KillAllPlayers
+- Added RevivePlayer
+- Added ReviveAllPlayers
+- Added SendMessage
+- Added PlayerTumble
+- Added PlayerTumbleAll
+
 v1.0.55 +
 - Bug Fix: ESP lines now no longer render for destroyed items / enemies
 

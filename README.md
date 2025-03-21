@@ -215,6 +215,13 @@ The following provides information about the utility functions available in the 
 | `GetPlayerAvatarComponent()` | Returns the player's avatar component |
 | `GetPlayerVoice()` | Returns the player's voice component |
 | `GetPlayerVoiceChat()` | Returns the player's voice chat component |
+| `KillPlayer(PlayerAvatar playerAvatar)` | Kills a player |
+| `KillAllPlayers()` | Kills all players |
+| `RevivePlayer(PlayerAvatar playerAvatar)` | Revives a player |
+| `ReviveAllPlayers()` | Revives all players |
+| `SendMessage(PlayerAvatar playerAvatar, string message)` | Sends a message as the player |
+| `PlayerTumble(PlayerAvatar playerAvatar)` | Tumbles the player |
+| `PlayerTumbleAll()` | Tumbles all players |
 
 ### Player Stats Management
 
