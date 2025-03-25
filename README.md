@@ -256,6 +256,7 @@ The following provides information about the utility functions available in the 
 | `UpgradePlayerEnergy(string steamId)` | Upgrades the player's energy capacity |
 | `UpgradePlayerGrabRange(string steamId)` | Upgrades the player's grab range |
 | `UpgradePlayerGrabStrength(string steamId)` | Upgrades the player's grab strength |
+| `UpgradePlayerGrabStrengthNonHost()` | Upgrades the player's grab strength for non-host players |
 | `UpgradePlayerHealth(string steamId)` | Upgrades the player's health capacity |
 | `UpgradePlayerSprintSpeed(string steamId)` | Upgrades the player's sprint speed |
 | `UpgradePlayerThrowStrength(string steamId)` | Upgrades the player's throw strength |

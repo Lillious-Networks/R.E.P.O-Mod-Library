@@ -1,3 +1,6 @@
+v1.0.63 +
+- Added UpgradePlayerGrabStrengthNonHost for non-hosts
+
 v1.0.62 +
 - Added KillPlayer
 - Added KillAllPlayers

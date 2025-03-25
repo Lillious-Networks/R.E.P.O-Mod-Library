@@ -7,6 +7,7 @@ using Steamworks;
 using Photon.Pun;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 [assembly: MelonInfo(typeof(Library), "R.E.P.O Mod Library", "1.0.0", "Lillious & .Zer0")]
 [assembly: MelonGame("semiwork", "REPO")]
@@ -35,7 +36,8 @@ namespace Repo_Library
     }
 
     public class Library : MelonMod
-    { 
+    {
+        private CancellationTokenSource _chatCancellationTokenSource;
         // Set scene data for the game
         public async void SetSceneData()
         {
@@ -457,7 +459,13 @@ namespace Repo_Library
             PunManager.instance.UpgradePlayerGrabRange(GetSteamId().ToString());
         }
 
-        // Upgrade player grab strength
+        // Non-Host Equivalent to Upgrade Player Grab Strength
+        public void UpgradePlayerGrabStrengthNonHost()
+        {
+            StatsManager.instance.playerUpgradeStrength[SemiFunc.PlayerGetSteamID(PlayerAvatar.instance)]++;
+        }
+
+        // Upgrade player grab strength (Host Only)
         public void UpgradePlayerGrabStrength()
         {
             PunManager.instance.UpgradePlayerGrabStrength(GetSteamId().ToString());
