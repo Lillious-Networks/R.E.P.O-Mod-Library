@@ -80,7 +80,7 @@ jobs:
               <authors>Lillious, .Zer0</authors>
               <owners>Lillious, .Zer0</owners>
               <requireLicenseAcceptance>false</requireLicenseAcceptance>
-              <license type="expression">MIT</license>
+              <license type="expression">Apache-2.0</license>
               <description>The official mod library for the game R.E.P.O</description>
               <releaseNotes>$releaseNotes</releaseNotes>
               <copyright>Copyright © 2025</copyright>
