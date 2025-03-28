@@ -1,3 +1,12 @@
+v1.0.65 +
+- Fixed a bug where SetSceneData was called twice
+- Added SetDeadEnemies
+- Added GetDeadEnemies
+- Added MonitorEnemies coroutine
+- Renamed SpawnItem to SpawnValuable
+- Added SpawnItem
+- Added Action listener OnEnemyDeath
+
 v1.0.63 +
 - Added UpgradePlayerGrabStrengthNonHost for non-hosts
 

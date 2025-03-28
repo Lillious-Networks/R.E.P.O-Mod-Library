@@ -7,7 +7,9 @@ using Steamworks;
 using Photon.Pun;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
+using UnityEngine.Events;
+using System;
+using System.Collections;
 
 [assembly: MelonInfo(typeof(Library), "R.E.P.O Mod Library", "1.0.0", "Lillious & .Zer0")]
 [assembly: MelonGame("semiwork", "REPO")]
@@ -27,6 +29,7 @@ namespace Repo_Library
         public static List<Level> Menus = new List<Level>();
         public static GameObject Map { get; set; }
         public static GameObject[] Enemies { get; set; }
+        public static GameObject[] DeadEnemies { get; set; }
         public static GameObject[] Items { get; set; }
     }
 
@@ -35,9 +38,17 @@ namespace Repo_Library
         public static ulong SteamId { get; set; }
     }
 
+    // Events
+    [System.Serializable]
+    public class GameObjectEvent : UnityEvent<string>
+    {
+        
+    }
+
     public class Library : MelonMod
     {
-        private CancellationTokenSource _chatCancellationTokenSource;
+        public static event Action<GameObject> OnEnemyDeath;
+
         // Set scene data for the game
         public async void SetSceneData()
         {
@@ -46,15 +57,17 @@ namespace Repo_Library
             {
                 await Task.Delay(100);
                 levelGenerator = LevelGenerator.Instance;
+
             }
 
             // Wait for the level to be generated before setting up the game data
-            while (!LevelGenerator.Instance.Generated)
+            while (!levelGenerator.Generated)
             {
                 await Task.Delay(100);
             }
 
             GameObject enemies = GameObject.Find("Level Generator").transform.Find("Enemies")?.gameObject;
+
             if (enemies == null)
             {
                 MelonLogger.Msg("Unable to locate Enemies");
@@ -63,10 +76,18 @@ namespace Repo_Library
                 List<GameObject> enemyList = new List<GameObject>();
                 foreach (Transform child in enemies.transform)
                 {
+                    GameObject enable = child?.transform.Find("Enable")?.gameObject;
+                    GameObject controller = enable?.transform.Find("Controller")?.gameObject;
+                    EnemyHealth enemyHealth = controller?.GetComponent<EnemyHealth>();
                     GameObject childGameObject = child.gameObject;
-                    enemyList.Add(childGameObject);
+                    if (enemyHealth != null)
+                    {
+                        enemyList.Add(childGameObject);
+                    }
                 }
                 SetEnemies(enemyList.ToArray());
+                SetDeadEnemies(new GameObject[0]);
+                MelonCoroutines.Start(MonitorEnemies(enemyList));
             }
 
             // Check if the item has ValueableObject component
@@ -92,6 +113,57 @@ namespace Repo_Library
 
             // Everything has been initialized
             SetInGame(true);
+        }
+
+        private IEnumerator MonitorEnemies(List<GameObject> enemyList)
+        {
+            // Stop if the enemy list is empty
+            if (enemyList == null || enemyList.Count == 0)
+            {
+                yield break;
+            }
+            while (true) // Keeps running indefinitely
+            {
+                foreach (GameObject enemy in enemyList)
+                {
+                    if (enemy == null)
+                    {
+                        continue;
+                    }
+                    GameObject enable = enemy?.transform.Find("Enable")?.gameObject;
+                    GameObject controller = enable?.transform.Find("Controller")?.gameObject;
+                    EnemyHealth enemyHealth = controller?.GetComponent<EnemyHealth>();
+
+                    if (enemyHealth != null)
+                    {
+                        Type enemyHealthType = typeof(EnemyHealth);
+                        FieldInfo deadField = enemyHealthType?.GetField("dead", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                        if (deadField != null)
+                        {
+                            bool isDead = (bool)deadField.GetValue(enemyHealth);
+                            if (isDead)
+                            {
+                                GameObject[] deadEnemies = GetDeadEnemies();
+                                // Check if the enemy is already in the list
+                                if (deadEnemies.Contains(enemy))
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+                                    SharedSceneData.DeadEnemies = SharedSceneData.DeadEnemies.Append(enemy).ToArray();
+                                    OnEnemyDeath?.Invoke(enemy);
+                                }
+                            } else
+                            {
+                                SharedSceneData.DeadEnemies = SharedSceneData.DeadEnemies.Where(val => val != enemy).ToArray();
+                            }
+                        }
+                    }
+                }
+                yield return new WaitForSeconds(1f); // Adjust the interval as needed
+            }
         }
 
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
@@ -158,7 +230,7 @@ namespace Repo_Library
             }
 
             // Checks if the player is in game
-            if (!SharedSceneData.Menus.Contains(runManager.levelCurrent))
+            if (!SharedSceneData.Menus.Contains(runManager.levelCurrent) && sceneName != "Reload")
             {
                 SetSceneData();
             }
@@ -223,6 +295,12 @@ namespace Repo_Library
         {
             SharedSceneData.Enemies = enemies;
         }
+
+        public void SetDeadEnemies(GameObject[] enemies)
+        {
+            SharedSceneData.DeadEnemies = enemies;
+        }
+
         public void SetItems(GameObject[] items)
         {
             SharedSceneData.Items = items;
@@ -380,6 +458,11 @@ namespace Repo_Library
             return SharedSceneData.Enemies;
         }
 
+        public GameObject[] GetDeadEnemies()
+        {
+            return SharedSceneData.DeadEnemies;
+        }
+
         public RecordingDirector GetRecordingDirector()
         {
             return RecordingDirector.instance;
@@ -428,6 +511,12 @@ namespace Repo_Library
         public LightManager GetLightManager()
         {
             return LightManager.instance;
+        }
+
+        public class SharedGameData
+        {
+            public static GameObject[] EnemyData { get; set; }
+            public static GameObject[] TrackedEnemies { get; set; }
         }
 
         // Freeze enemies in the game
@@ -864,17 +953,29 @@ namespace Repo_Library
             StatsManager.instance.ItemAdd(item);
         }
 
-        // Spawn an item in the game
-        public void SpawnItem(GameObject item)
+        // Spawn a valuable in the game
+        public void SpawnValuable(GameObject item)
         {
             GameObject player = GetPlayerControllerObject();
             Vector3 position = player.transform.position + player.transform.forward * 2 + player.transform.up * 2;
             if (!SemiFunc.IsMultiplayer())
             {
-                Object.Instantiate(item, position, Quaternion.identity);
+                UnityEngine.Object.Instantiate(item, position, Quaternion.identity);
             } else
             {
                 PhotonNetwork.InstantiateRoomObject("Valuables/" + item.name, position, Quaternion.identity, 0);
+            }
+        }
+
+        // Spawn item in the game
+        public void SpawnItem(string name, Vector3 position)
+        {
+            if (!IsMasterClient()) return;
+            Dictionary<string, Item> items = StatsManager.instance.itemDictionary;
+            if (items == null) return;
+            if (items.ContainsKey(name))
+            {
+                PhotonNetwork.InstantiateRoomObject("Items/" + name, position, Quaternion.identity, 0);
             }
         }
 
@@ -990,12 +1091,12 @@ namespace Repo_Library
                 LineRenderer line = enemy.GetComponent<LineRenderer>();
                 if (line != null)
                 {
-                    Object.Destroy(line);
+                    UnityEngine.Object.Destroy(line);
                 }
                 TextMesh textMesh = enemy.GetComponentInChildren<TextMesh>();
                 if (textMesh != null)
                 {
-                    Object.Destroy(textMesh.gameObject);
+                    UnityEngine.Object.Destroy(textMesh.gameObject);
                 }
             }
         }
@@ -1013,12 +1114,12 @@ namespace Repo_Library
                 LineRenderer line = item.GetComponent<LineRenderer>();
                 if (line != null)
                 {
-                    Object.Destroy(line);
+                    UnityEngine.Object.Destroy(line);
                 }
                 TextMesh textMesh = item.GetComponentInChildren<TextMesh>();
                 if (textMesh != null)
                 {
-                    Object.Destroy(textMesh.gameObject);
+                    UnityEngine.Object.Destroy(textMesh.gameObject);
                 }
             }
         }

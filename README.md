@@ -98,6 +98,21 @@ namespace Repo_ExampleMod
 
 The following provides information about the utility functions available in the game system. These functions are categorized based on their purpose and functionality.
 
+### Action Events
+| Function | Description |
+|----------|-------------|
+| `OnEnemyDeath` | Event triggered when an enemy dies | `GameObject enemy` |
+
+```csharp
+public override void OnInitializeMelon()
+{
+    Library.OnEnemyDeath += (enemy) =>
+    {
+        MelonLogger.Msg("Enemy Died: " + enemy.name);
+    };
+}
+```
+
 ### Player Data Management
 
 | Function | Description |
@@ -185,6 +200,9 @@ The following provides information about the utility functions available in the 
 | `SetEnemies(GameObject[] enemies)` | Sets the list of enemies in the current level |
 | `GetEnemies()` | Returns the list of enemies in the current level |
 | `SpawnEnemy(Enemy enemy)` | Spawns an enemy in the level |
+| `SetDeadEnemies(GameObject[] enemies)` | Sets the list of dead enemies in the current level |
+| `GetDeadEnemies()` | Returns the list of dead enemies in the current level |
+| `MonitorEnemies()` | Monitors enemies death and respawn in the level MelonCoroutines.Start(MonitorEnemies(enemyList)) |
 
 ### Item Management
 
@@ -193,7 +211,7 @@ The following provides information about the utility functions available in the 
 | `GetItemsInMap()` | Returns a list of items in the map |
 | `SetDisableItemDurability()` | Disables durability of all items in the map |
 | `SetEnableItemDurability()` | Enables durability of all items in the map |
-| `SpawnItem(GameObject item, Vector3 position)` | Spawns an item at the specified position (AssetManager.instance.surplusValuableSmall) |
+| `SpawnValuable(GameObject item, Vector3 position)` | Spawns an item at the specified position (AssetManager.instance.surplusValuableSmall) |
 | `SetItems(GameObject[] items)` | Sets the list of items in the map |
 | `GetItems()` | Returns the list of items in the map |
 | `DrawLineToItem()` | Draws a line from the player to all items in the map and displays distance |
@@ -202,6 +220,7 @@ The following provides information about the utility functions available in the 
 | `AddItem(string item)` | Adds an item to the player's inventory |
 | `GetValuableDirector()` | Returns the valuable director instance |
 | `UpgradeItemBattery(GameObject item)` | Upgrades the battery of the specified item |
+| `SpawnItem(string name, Vector3 position)` | Spawns an item at the specified position |
 
 ### Player Control
 
