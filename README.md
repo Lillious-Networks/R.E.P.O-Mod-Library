@@ -101,7 +101,7 @@ The following provides information about the utility functions available in the 
 ### Action Events
 | Function | Description |
 |----------|-------------|
-| `OnEnemyDeath` | Event triggered when an enemy dies | `GameObject enemy` |
+| `OnEnemyDeath` | Event triggered when an enemy dies |
 
 ```csharp
 public override void OnInitializeMelon()
@@ -113,7 +113,9 @@ public override void OnInitializeMelon()
 }
 ```
 
-| `OnItemDestroyed` | Event triggered when an item is destroyed | `GameObject item` |
+| Function | Description |
+|----------|-------------|
+| `OnItemDestroyed` | Event triggered when an item is destroyed |
 
 ```csharp
 public override void OnInitializeMelon()
@@ -125,7 +127,9 @@ public override void OnInitializeMelon()
 }
 ```
 
-| `OnItemDamaged` | Event triggered when an item is damaged | `GameObject item` |
+| Function | Description |
+|----------|-------------|
+| `OnItemDamaged` | Event triggered when an item is damaged |
 
 ```csharp
 public override void OnInitializeMelon()
