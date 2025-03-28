@@ -113,6 +113,30 @@ public override void OnInitializeMelon()
 }
 ```
 
+| `OnItemDestroyed` | Event triggered when an item is destroyed | `GameObject item` |
+
+```csharp
+public override void OnInitializeMelon()
+{
+    Library.OnItemDestroyed += (item) =>
+    {
+        MelonLogger.Msg("Item Destroyed: " + item.name);
+    };
+}
+```
+
+| `OnItemDamaged` | Event triggered when an item is damaged | `GameObject item` |
+
+```csharp
+public override void OnInitializeMelon()
+{
+    Library.OnItemDamaged += (item) =>
+    {
+        MelonLogger.Msg("Item Damaged: " + item.name);
+    };
+}
+```
+
 ### Player Data Management
 
 | Function | Description |

@@ -31,6 +31,7 @@ namespace Repo_Library
         public static GameObject[] Enemies { get; set; }
         public static GameObject[] DeadEnemies { get; set; }
         public static GameObject[] Items { get; set; }
+        public static GameObject[] DestroyedItems { get; set; }
     }
 
     public class SharedPlayerData
@@ -48,6 +49,8 @@ namespace Repo_Library
     public class Library : MelonMod
     {
         public static event Action<GameObject> OnEnemyDeath;
+        public static event Action<GameObject> OnItemDestroyed;
+        public static event Action<GameObject> OnItemDamaged;
 
         // Set scene data for the game
         public async void SetSceneData()
@@ -107,14 +110,72 @@ namespace Repo_Library
                         items = items.Where(val => val != item).ToArray();
                     }
                 }
-
                 SetItems(items);
+                SetDestroyedItems(new GameObject[0]);
+                MelonCoroutines.Start(MonitorItems(items));
             }
 
             // Everything has been initialized
             SetInGame(true);
         }
+        private IEnumerator MonitorItems(GameObject[] items)
+        {
+            if (items == null || items.Length == 0)
+            {
+                yield break;
+            }
 
+            Dictionary<GameObject, (string name, float lastValue)> itemData = new Dictionary<GameObject, (string, float)>();
+
+            // Initialize item tracking
+            foreach (GameObject item in items)
+            {
+                if (item != null)
+                {
+                    float initialValue = item.GetComponent<ValuableObject>().dollarValueCurrent;
+                    itemData[item] = (item.name, initialValue);
+                }
+            }
+
+            while (itemData.Count > 0) // Stop when all items are gone
+            {
+                List<GameObject> destroyedItems = new List<GameObject>();
+                List<GameObject> damagedItems = new List<GameObject>();
+
+                // Iterate safely without modifying the dictionary
+                foreach (var kvp in itemData.ToList()) // Convert to list to prevent modification issues
+                {
+                    GameObject item = kvp.Key;
+
+                    if (item == null)
+                    {
+                        destroyedItems.Add(kvp.Key); // Mark for removal
+                        continue;
+                    }
+
+                    float currentValue = item.GetComponent<ValuableObject>().dollarValueCurrent;
+                    if (!Mathf.Approximately(currentValue, kvp.Value.lastValue)) // Check for change
+                    {
+                        damagedItems.Add(item);
+                    }
+                }
+
+                // Invoke events after iteration
+                foreach (var damagedItem in damagedItems)
+                {
+                    OnItemDamaged?.Invoke(damagedItem);
+                    itemData[damagedItem] = (itemData[damagedItem].name, damagedItem.GetComponent<ValuableObject>().dollarValueCurrent); // Update last known value
+                }
+
+                foreach (var destroyedItem in destroyedItems)
+                {
+                    OnItemDestroyed?.Invoke(destroyedItem);
+                    itemData.Remove(destroyedItem);
+                }
+
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
         private IEnumerator MonitorEnemies(List<GameObject> enemyList)
         {
             // Stop if the enemy list is empty
@@ -122,7 +183,7 @@ namespace Repo_Library
             {
                 yield break;
             }
-            while (true) // Keeps running indefinitely
+            while (true)
             {
                 foreach (GameObject enemy in enemyList)
                 {
@@ -162,7 +223,7 @@ namespace Repo_Library
                         }
                     }
                 }
-                yield return new WaitForSeconds(1f); // Adjust the interval as needed
+                yield return new WaitForSeconds(0.1f);
             }
         }
 
@@ -299,6 +360,11 @@ namespace Repo_Library
         public void SetDeadEnemies(GameObject[] enemies)
         {
             SharedSceneData.DeadEnemies = enemies;
+        }
+
+        public void SetDestroyedItems(GameObject[] items)
+        {
+            SharedSceneData.DestroyedItems = items;
         }
 
         public void SetItems(GameObject[] items)
@@ -841,6 +907,12 @@ namespace Repo_Library
         public GameObject[] GetItems ()
         {
             return SharedSceneData.Items;
+        }
+
+        // Get all destroyed items in the map
+        public GameObject[] GetDestroyedItems()
+        {
+            return SharedSceneData.DestroyedItems;
         }
 
         // Disable items durability in the game
