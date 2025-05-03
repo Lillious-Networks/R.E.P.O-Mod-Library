@@ -104,6 +104,8 @@ jobs:
               <file src="bin\Release\UnityEngine.TextCoreFontEngineModule.dll" target="lib"/>
               <file src="bin\Release\UnityEngine.TextCoreTextEngineModule.dll" target="lib"/>
               <file src="bin\Release\UnityEngine.TextRenderingModule.dll" target="lib"/>
+              <file src="bin\Release\UnityEngine.UI.dll" target="lib"/>
+              <file src="bin\Release\UnityEngine.UIModule.dll" target="lib"/>
               <file src="README.md" target="."/>
               <file src="images\icon.png" target="."/>
               <file src="releasenotes.txt" target="."/>
