@@ -140,7 +140,7 @@ jobs:
 
       - name: Publish Nuget Package 🚀
         run: |
-          nuget push RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }} -SkipDuplicate
+          nuget push RepoModLibrary.${{ needs.generate-build-number.outputs.version }}${{ github.ref_name == 'beta' && '-beta' || '' }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }} -SkipDuplicate
           
       - name: Set up Git 🛠️
         run: |
@@ -153,7 +153,7 @@ jobs:
           tag_name: v${{ needs.generate-build-number.outputs.version }}
           name: Release v${{ needs.generate-build-number.outputs.version }}${{ github.ref_name == 'beta' && ' (Beta)' || '' }}
           files: |
-            RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg
+            RepoModLibrary.${{ needs.generate-build-number.outputs.version }}${{ github.ref_name == 'beta' && '-beta' || '' }}.nupkg
             bin/Release/Repo_Library.dll
             Thunderstore-REPO-Mod-Library-Package-${{ needs.generate-build-number.outputs.version }}.zip
             Nexus-REPO-Mod-Library-Package-${{ needs.generate-build-number.outputs.version }}.zip
