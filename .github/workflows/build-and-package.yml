@@ -139,7 +139,6 @@ jobs:
         run: nuget pack Repo_Library.nuspec -OutputDirectory .
 
       - name: Publish Nuget Package 🚀
-        if: ${{ github.ref_name == 'master' }} # Only publish to nuget if not a beta release
         run: |
           nuget push RepoModLibrary.${{ needs.generate-build-number.outputs.version }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }} -SkipDuplicate
           
